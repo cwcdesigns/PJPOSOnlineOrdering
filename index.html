@@ -3,360 +3,381 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plain Jane's Pizza - Online Ordering</title>
+    <title>Jane's Pizza - Online Ordering</title>
     <style>
+        /* CSS Variables for Theming */
+        :root {
+            /* Dark Mode Defaults (Applied directly, no class needed initially) */
+            --bg-color: #1a1a1a;
+            --text-color: #e1e1e1;
+            --card-bg-color: #2a2a2a;
+            --border-color: #444;
+            --shadow-color: rgba(255, 255, 255, 0.05);
+            --primary-color: #e74c3c; /* Red accent */
+            --secondary-color: #e09389; /* Lighter red/pink for some highlights */
+            --button-text-color: #ffffff;
+            --input-bg-color: #333;
+            --input-border-color: #555;
+            --input-text-color: #e1e1e1;
+            --h-border-color: var(--primary-color);
+        }
+
+        body.light-mode {
+             /* Light Mode Overrides */
+            --bg-color: #f8f8f8;
+            --text-color: #333;
+            --card-bg-color: #ffffff;
+            --border-color: #eee;
+            --shadow-color: rgba(0, 0, 0, 0.05);
+            --input-bg-color: #fff;
+            --input-border-color: #ccc;
+            --input-text-color: #333;
+        }
+
+        /* General Styles using Variables */
         body {
             font-family: sans-serif;
             line-height: 1.6;
             margin: 0;
-            background-color: #f8f8f8; /* Lighter background */
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
         }
+         .header-controls {
+             display: flex;
+             justify-content: space-between;
+             align-items: center;
+             padding: 10px 20px;
+             background-color: var(--card-bg-color);
+             border-bottom: 1px solid var(--border-color);
+             position: sticky; /* Make header sticky */
+             top: 0;
+             z-index: 100; /* Ensure header is above other content */
+         }
+         .header-controls h1 {
+             margin: 0; /* Remove default margin */
+             color: var(--primary-color);
+             border-bottom: none;
+             font-size: 1.8em;
+         }
+         #theme-switcher {
+             padding: 8px 15px;
+             cursor: pointer;
+             background-color: var(--primary-color);
+             color: var(--button-text-color);
+             border: none;
+             border-radius: 20px;
+             font-weight: bold;
+         }
         .page-wrapper {
             display: flex;
-            max-width: 1400px; /* Allow wider layout */
+            max-width: 1400px;
             margin: 20px auto;
-            gap: 20px; /* Space between menu and cart */
+            padding-top: 60px; /* Add padding to prevent content hiding under sticky header */
+            gap: 20px;
         }
         .menu-container {
-            flex: 3; /* Menu takes more space */
-            background: #fff;
+            flex: 3;
+            background: var(--card-bg-color);
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+            box-shadow: 0 0 10px var(--shadow-color);
+            border: 1px solid var(--border-color);
         }
         .cart-container {
-            flex: 1; /* Cart takes less space */
-            background: #fff;
+            flex: 1;
+            background: var(--card-bg-color);
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.05);
-            height: fit-content; /* Cart height adjusts */
-            position: sticky; /* Make cart sticky */
-            top: 20px; /* Stick below top margin */
+            box-shadow: 0 0 10px var(--shadow-color);
+            border: 1px solid var(--border-color);
+            height: fit-content;
+            position: sticky;
+            top: 80px; /* Adjust sticky top position below header */
         }
+         #checkout-view {
+            max-width: 800px; /* Or adjust as needed */
+            margin: 20px auto;
+            padding-top: 80px; /* Add padding below header */
+            background: var(--card-bg-color);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px var(--shadow-color);
+            border: 1px solid var(--border-color);
+         }
+        /* Headings using variables */
         h1, h2, h3 {
-            color: #333;
-            border-bottom: 2px solid #e74c3c;
+            color: var(--text-color); /* Use variable */
+            border-bottom: 2px solid var(--h-border-color);
             padding-bottom: 5px;
             margin-bottom: 15px;
-            margin-top: 0; /* Remove default top margin */
+            margin-top: 0;
         }
-        h1 {
-            text-align: center;
-            color: #e74c3c;
-            border-bottom: none; /* Remove border from main title */
-        }
-        h2 {
-             margin-top: 20px; /* Add space above category titles */
-        }
-        .menu-category {
-            margin-bottom: 30px;
-        }
+        h2 { margin-top: 20px; }
 
-        /* Card Styling for Menu Items */
+        /* Menu Item Card Styling */
+        .menu-category { margin-bottom: 30px; }
         .menu-item {
-            display: flex; /* Use flexbox for card layout */
-            border: 1px solid #eee;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            background-color: #fff;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            gap: 15px; /* Space between elements in the card */
-            align-items: flex-start; /* Align items to top */
+            display: flex;
+            border: 1px solid var(--border-color);
+            padding: 15px; margin-bottom: 15px; border-radius: 8px;
+            background-color: var(--bg-color);
+            box-shadow: 0 2px 5px var(--shadow-color);
+            gap: 15px; align-items: flex-start;
         }
-        .item-image-placeholder {
-            width: 80px;
-            height: 80px;
-            background-color: #f0f0f0;
-            border-radius: 4px;
-            flex-shrink: 0; /* Prevent image placeholder from shrinking */
-             /* In real use: */
-             /* background-image: url('path/to/image.jpg'); */
-             /* background-size: cover; */
-             /* background-position: center; */
-        }
-        .item-details {
-            flex-grow: 1; /* Allow details to take remaining space */
-        }
-        .item-name {
-            font-weight: bold;
-            font-size: 1.1em;
-            color: #444;
-            margin-bottom: 5px; /* Space below name */
-        }
-        .item-description {
-            font-size: 0.9em;
-            color: #666;
-            margin-bottom: 10px;
-        }
-        .item-price {
-            font-weight: bold;
-            color: #e74c3c;
-            margin-bottom: 10px;
-            display: block; /* Make price block level */
-        }
-        .item-options {
-            font-size: 0.9em;
-            margin-bottom: 10px;
-        }
-        .item-options label, .item-options select, .item-options input[type="checkbox"] {
-             margin-right: 10px;
-             display: block; /* Options stack vertically */
-             margin-bottom: 8px;
-        }
-        .item-options select {
-             padding: 5px;
-             border-radius: 4px;
-             border: 1px solid #ccc;
-        }
-        .add-to-cart-area {
-           display: flex;
-           flex-direction: column; /* Stack price/button if needed */
-           align-items: flex-end; /* Align button to the right end */
-           margin-left: auto; /* Push to the right */
-        }
-        .add-to-cart-btn {
-            background-color: #e74c3c; /* Button color from image */
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 20px; /* Rounded button */
-            cursor: pointer;
-            font-size: 0.9em;
-            font-weight: bold;
-            margin-top: 10px;
-            white-space: nowrap; /* Prevent button text wrapping */
-        }
-        .add-to-cart-btn:hover {
-            background-color: #c0392b;
-        }
+        .item-image-placeholder { width: 80px; height: 80px; background-color: var(--input-bg-color); border: 1px solid var(--border-color); border-radius: 4px; flex-shrink: 0; }
+        .item-details { flex-grow: 1; }
+        .item-name { font-weight: bold; font-size: 1.1em; color: var(--secondary-color); margin-bottom: 5px; }
+        .item-description { font-size: 0.9em; color: var(--text-color); opacity: 0.9; margin-bottom: 10px; }
+        .item-price { font-weight: bold; color: var(--primary-color); margin-bottom: 10px; display: block; }
+        .item-options { font-size: 0.9em; margin-bottom: 10px; }
+        .item-options label { margin-right: 10px; display: block; margin-bottom: 8px; color: var(--text-color); }
+        .item-options select { padding: 5px; border-radius: 4px; border: 1px solid var(--input-border-color); background-color: var(--input-bg-color); color: var(--input-text-color); }
+        .item-options input[type="radio"], .item-options input[type="checkbox"] { margin-right: 5px; }
+        .add-to-cart-area { display: flex; flex-direction: column; align-items: flex-end; margin-left: auto; }
+        .add-to-cart-btn { background-color: var(--primary-color); color: var(--button-text-color); border: none; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 0.9em; font-weight: bold; margin-top: 10px; white-space: nowrap; }
+        .add-to-cart-btn:hover { opacity: 0.85; }
 
         /* Cart Styling */
-        #cart-items ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        #cart-items li {
-            border-bottom: 1px dashed #eee;
-            padding: 10px 0;
-            margin-bottom: 10px;
-            font-size: 0.9em;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-         #cart-items li .item-info {
-             flex-grow: 1;
-             margin-right: 10px;
-         }
-         #cart-items li .item-info span {
-             display: block;
-         }
-          #cart-items li .item-info .cart-item-options {
-              font-size: 0.85em;
-              color: #555;
-          }
-        #cart-items li .item-price {
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 0; /* Override default */
-        }
-        #cart-total {
-            margin-top: 20px;
-            border-top: 2px solid #333;
-            padding-top: 10px;
-            font-weight: bold;
-            font-size: 1.2em;
-            text-align: right;
-        }
-        #checkout-btn {
-            background-color: #2ecc71;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 20px;
-            width: 100%; /* Make button full width */
-            font-size: 1.1em;
-        }
-         #checkout-btn:hover {
-             background-color: #27ae60;
-         }
+        .cart-container h2 { border-color: var(--secondary-color); }
+        #cart-items ul { list-style: none; padding: 0; margin: 0; }
+        #cart-items li { border-bottom: 1px dashed var(--border-color); padding: 10px 0; margin-bottom: 10px; font-size: 0.9em; display: flex; justify-content: space-between; align-items: center; }
+        #cart-items li .item-info { flex-grow: 1; margin-right: 10px; }
+        #cart-items li .item-info span { display: block; }
+        #cart-items li .item-info .cart-item-options { font-size: 0.85em; color: var(--text-color); opacity: 0.8; }
+        #cart-items li .item-price { font-weight: bold; color: var(--text-color); margin-bottom: 0; }
+        #cart-total { margin-top: 20px; border-top: 2px solid var(--secondary-color); padding-top: 10px; font-weight: bold; font-size: 1.2em; text-align: right; }
+        #checkout-btn { background-color: #2ecc71; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-top: 20px; width: 100%; font-size: 1.1em; }
+        #checkout-btn:hover { background-color: #27ae60; }
 
-        /* Responsive adjustments could be added here */
+        /* Checkout Form Styling */
+        #checkout-view h2 { text-align: center; }
+        #checkout-form label { display: block; margin-bottom: 5px; font-weight: bold; }
+        #checkout-form input[type="text"],
+        #checkout-form input[type="tel"],
+        #checkout-form input[type="email"],
+        #checkout-form select {
+            width: 100%; padding: 10px; margin-bottom: 15px;
+            border: 1px solid var(--input-border-color);
+            background-color: var(--input-bg-color);
+            color: var(--input-text-color);
+            border-radius: 4px; box-sizing: border-box;
+        }
+        #checkout-form h3 { border-color: var(--secondary-color); margin-top: 25px; }
+        #checkout-form input[type="radio"] { margin-right: 5px; }
+        #checkout-form .delivery-options label { display: inline-block; margin-right: 15px; font-weight: normal; }
+        #card-element { border: 1px solid var(--input-border-color); padding: 10px; margin-top: 10px; border-radius: 4px; background-color: var(--bg-color); }
+        #card-errors { color: #fa755a; margin-top: 10px; }
+        #checkout-summary { border: 1px solid var(--border-color); padding: 15px; margin-top: 15px; border-radius: 4px; }
+        #checkout-summary h4 { margin-top: 0; border-bottom: 1px solid var(--border-color); padding-bottom: 5px; }
+        #checkout-summary div { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.9em; }
+        #checkout-summary .total { font-weight: bold; font-size: 1.1em; border-top: 1px solid var(--border-color); padding-top: 10px; margin-top: 10px; }
+        #submit-order-btn { background-color: var(--primary-color); color: var(--button-text-color); padding: 12px 25px; border: none; border-radius: 5px; cursor: pointer; margin-top: 20px; font-size: 1.1em; width: 100%; }
+        #submit-order-btn:hover { opacity: 0.85; }
+        #back-to-menu-btn { margin-top: 15px; background: grey; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; width: 100%; }
+
+        .hidden { display: none !important; } /* Use !important for simple visibility toggle */
+
+        /* Responsive adjustments */
         @media (max-width: 900px) {
-            .page-wrapper {
-                flex-direction: column;
-            }
-            .cart-container {
-                position: static; /* Remove sticky on small screens */
-                margin-top: 20px;
-            }
+            .page-wrapper { flex-direction: column; padding-top: 70px; /* Adjust below header */ }
+            .cart-container { position: static; margin-top: 20px; top: auto; }
+             #checkout-view { padding-top: 20px; } /* Remove extra padding */
         }
-
+        @media (max-width: 600px) {
+             .menu-item { flex-direction: column; align-items: stretch; }
+             .item-image-placeholder { width: 100%; height: 150px; }
+             .add-to-cart-area { align-items: flex-start; margin-left: 0; margin-top: 10px; }
+             .header-controls { flex-direction: column; gap: 10px; text-align: center; position: static; /* Unstick header */}
+             .page-wrapper { padding-top: 20px; } /* Reset padding */
+             .cart-container { top: auto; }
+             #checkout-view { padding-top: 20px; }
+        }
     </style>
 </head>
-<body>
+<body> <div class="header-controls">
+     <h1>Jane's Pizza</h1>
+     <button id="theme-switcher">Light Mode</button>
+ </div>
 
-<div class="page-wrapper">
+<div class="page-wrapper" id="main-content">
 
     <div class="menu-container">
-        <h1>Jane's Pizza - Order Online</h1>
-
         <section id="appetizers" class="menu-category">
-            <h2>Appetizers</h2>
-            <div class="menu-item" data-id="fries-basket" data-name="Basket Of Fries" data-price="4.99">
-                <div class="item-image-placeholder"></div>
-                <div class="item-details">
-                    <span class="item-name">Basket Of Fries</span>
-                    <p class="item-description">Crinkle Cut Fries topped with salt.</p>
-                    <span class="item-price">$4.99</span>
-                </div>
-                <div class="add-to-cart-area">
-                    <button class="add-to-cart-btn">Add</button>
-                </div>
-            </div>
-
-            <div class="menu-item" data-id="tenders" data-name="Chicken Tenders" data-price="9.99">
-                <div class="item-image-placeholder"></div>
-                <div class="item-details">
-                    <span class="item-name">Chicken Tenders</span>
-                    <p class="item-description">Five fried chicken tenders.</p>
-                    <span class="item-price">$9.99</span>
-                    <div class="item-options">
-                         <label><input type="checkbox" name="add_fries_tenders" data-addon-price="1.99"> Add side of fries (+$1.99)</label>
-                    </div>
-                </div>
-                 <div class="add-to-cart-area">
-                    <button class="add-to-cart-btn">Add</button>
-                </div>
-            </div>
-
-            <div class="menu-item" data-id="fries-side" data-name="Side Of Fries" data-price="1.99">
-                <div class="item-image-placeholder"></div>
-                <div class="item-details">
-                    <span class="item-name">Side Of Fries</span>
-                     <span class="item-price">$1.99</span>
-                </div>
-                 <div class="add-to-cart-area">
-                    <button class="add-to-cart-btn">Add</button>
-                </div>
-            </div>
-
-             <div class="menu-item" data-id="garlic-bread" data-name="Garlic Bread" data-price="3.99">
-                <div class="item-image-placeholder"></div>
-                <div class="item-details">
-                    <span class="item-name">Garlic Bread</span>
-                    <p class="item-description">Bread brushed with garlic butter, and topped with oregano.</p>
-                    <span class="item-price">$3.99</span>
-                </div>
-                 <div class="add-to-cart-area">
-                    <button class="add-to-cart-btn">Add</button>
-                </div>
-            </div>
-
-             <div class="menu-item" data-id="cheese-sticks" data-name="Cheese Bread Sticks" data-price="8.99">
-                <div class="item-image-placeholder"></div>
-                <div class="item-details">
-                    <span class="item-name">Cheese Bread Sticks</span>
-                    <p class="item-description">Brushed with garlic butter, then topped with Mozzarella, Cheddar, and Parmesan.</p>
-                    <span class="item-price">$8.99</span>
-                </div>
-                 <div class="add-to-cart-area">
-                    <button class="add-to-cart-btn">Add</button>
-                </div>
-            </div>
+             <h2>Appetizers</h2>
+             <div class="menu-item" data-id="fries-basket" data-name="Basket Of Fries" data-price="4.99"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Basket Of Fries</span> <p class="item-description">Crinkle Cut Fries topped with salt.</p> <span class="item-price">$4.99</span> </div> <div class="add-to-cart-area"> <button class="add-to-cart-btn">Add</button> </div> </div>
+             <div class="menu-item" data-id="tenders" data-name="Chicken Tenders" data-price="9.99"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Chicken Tenders</span> <p class="item-description">Five fried chicken tenders.</p> <span class="item-price">$9.99</span> <div class="item-options"> <label><input type="checkbox" name="add_fries_tenders" data-addon-price="1.99"> Add side of fries (+$1.99)</label> </div> </div> <div class="add-to-cart-area"> <button class="add-to-cart-btn">Add</button> </div> </div>
+             <div class="menu-item" data-id="fries-side" data-name="Side Of Fries" data-price="1.99"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Side Of Fries</span> <span class="item-price">$1.99</span> </div> <div class="add-to-cart-area"> <button class="add-to-cart-btn">Add</button> </div> </div>
+             <div class="menu-item" data-id="garlic-bread" data-name="Garlic Bread" data-price="3.99"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Garlic Bread</span> <p class="item-description">Bread brushed with garlic butter, and topped with oregano.</p> <span class="item-price">$3.99</span> </div> <div class="add-to-cart-area"> <button class="add-to-cart-btn">Add</button> </div> </div>
+             <div class="menu-item" data-id="cheese-sticks" data-name="Cheese Bread Sticks" data-price="8.99"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Cheese Bread Sticks</span> <p class="item-description">Brushed with garlic butter, then topped with Mozzarella, Cheddar, and Parmesan.</p> <span class="item-price">$8.99</span> </div> <div class="add-to-cart-area"> <button class="add-to-cart-btn">Add</button> </div> </div>
         </section>
 
         <section id="gourmet-pizzas" class="menu-category">
              <h2>Jane's Gourmet Pizzas</h2>
              <p>All gourmet pies are 14" (Large - $17.99) or request an 18" (Extra Large - $25.99)!</p>
+             <div class="menu-item" data-id="white-pizza" data-name="White Pizza"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">White Pizza</span> <p class="item-description">Olive Oil, Provolone, Mozzarella, Parmesan Cheese, Beef, Oregano, Basil, Onions, Green Peppers, Tomatos.</p> <div class="item-options"> <label><input type="radio" name="white_pizza_size_1" value="Large (14&quot;)" data-price="17.99" checked> Large (14")</label> <label><input type="radio" name="white_pizza_size_1" value="XL (18&quot;)" data-price="25.99"> Extra Large (18")</label> </div> </div> <div class="add-to-cart-area"> <span class="item-price">$17.99</span> <button class="add-to-cart-btn">Add</button> </div> </div>
+              <div class="menu-item" data-id="greek-pizza" data-name="Greek Pizza"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Greek Pizza</span> <p class="item-description">Olive Oil, Fresh Garlic, Oregano, Feta Cheese, Onion, Black Olives, and Tomatoes.</p> <div class="item-options"> <label><input type="radio" name="greek_pizza_size_2" value="Large (14&quot;)" data-price="17.99" checked> Large (14")</label> <label><input type="radio" name="greek_pizza_size_2" value="XL (18&quot;)" data-price="25.99"> Extra Large (18")</label> </div> </div> <div class="add-to-cart-area"> <span class="item-price">$17.99</span> <button class="add-to-cart-btn">Add</button> </div> </div>
+              <div class="menu-item" data-id="bbq-chicken-pizza" data-name="BBQ Chicken Pizza"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">BBQ Chicken</span> <p class="item-description">BBQ Sauce, Grilled Chicken, Mozzarella, and Cheddar.</p> <div class="item-options"> <label><input type="radio" name="bbq_chicken_pizza_size_3" value="Large (14&quot;)" data-price="17.99" checked> Large (14")</label> <label><input type="radio" name="bbq_chicken_pizza_size_3" value="XL (18&quot;)" data-price="25.99"> Extra Large (18")</label> </div> </div> <div class="add-to-cart-area"> <span class="item-price">$17.99</span> <button class="add-to-cart-btn">Add</button> </div> </div>
+              <div class="menu-item" data-id="meatball-feast-pizza" data-name="Meatball Feast Pizza"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Meatball Feast</span> <p class="item-description">Marinara, Topped with Provolone, sliced meatballs, oregano, and Parmesan Cheese.</p> <div class="item-options"> <label><input type="radio" name="meatball_feast_pizza_size_4" value="Large (14&quot;)" data-price="17.99" checked> Large (14")</label> <label><input type="radio" name="meatball_feast_pizza_size_4" value="XL (18&quot;)" data-price="25.99"> Extra Large (18")</label> </div> </div> <div class="add-to-cart-area"> <span class="item-price">$17.99</span> <button class="add-to-cart-btn">Add</button> </div> </div>
+              <div class="menu-item" data-id="hawaiian-pizza" data-name="Hawaiian Pizza"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Hawaiian Pizza</span> <p class="item-description">Pineapple, Ham, and Mushrooms.</p> <div class="item-options"> <label><input type="radio" name="hawaiian_pizza_size_5" value="Large (14&quot;)" data-price="17.99" checked> Large (14")</label> <label><input type="radio" name="hawaiian_pizza_size_5" value="XL (18&quot;)" data-price="25.99"> Extra Large (18")</label> </div> </div> <div class="add-to-cart-area"> <span class="item-price">$17.99</span> <button class="add-to-cart-btn">Add</button> </div> </div>
+              <div class="menu-item" data-id="janes-philly-feast-pizza" data-name="Jane's Philly Feast Pizza"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Jane's Philly Feast</span> <p class="item-description">Philly Steak, Onions, and Green Peppers.</p> <div class="item-options"> <label><input type="radio" name="janes_philly_feast_pizza_size_6" value="Large (14&quot;)" data-price="17.99" checked> Large (14")</label> <label><input type="radio" name="janes_philly_feast_pizza_size_6" value="XL (18&quot;)" data-price="25.99"> Extra Large (18")</label> </div> </div> <div class="add-to-cart-area"> <span class="item-price">$17.99</span> <button class="add-to-cart-btn">Add</button> </div> </div>
+              <div class="menu-item" data-id="janes-italian-feast-pizza" data-name="Jane's Italian Feast Pizza"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Jane's Italian Feast</span> <p class="item-description">Italian Link Sausage, Salami, Pepperoni, and Meatballs.</p> <div class="item-options"> <label><input type="radio" name="janes_italian_feast_pizza_size_7" value="Large (14&quot;)" data-price="17.99" checked> Large (14")</label> <label><input type="radio" name="janes_italian_feast_pizza_size_7" value="XL (18&quot;)" data-price="25.99"> Extra Large (18")</label> </div> </div> <div class="add-to-cart-area"> <span class="item-price">$17.99</span> <button class="add-to-cart-btn">Add</button> </div> </div>
+              <div class="menu-item" data-id="chicken-bacon-ranch-pizza" data-name="Chicken Bacon Ranch Pizza"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Chicken Bacon Ranch</span> <p class="item-description">Grilled Chicken, Bacon, Ranch, and Onions.</p> <div class="item-options"> <label><input type="radio" name="chicken_bacon_ranch_pizza_size_8" value="Large (14&quot;)" data-price="17.99" checked> Large (14")</label> <label><input type="radio" name="chicken_bacon_ranch_pizza_size_8" value="XL (18&quot;)" data-price="25.99"> Extra Large (18")</label> </div> </div> <div class="add-to-cart-area"> <span class="item-price">$17.99</span> <button class="add-to-cart-btn">Add</button> </div> </div>
+              <div class="menu-item" data-id="janes-bacon-cheeseburger-pizza" data-name="Jane's Bacon Cheeseburger Pizza"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Jane's Bacon Cheeseburger Pizza</span> <p class="item-description">Ground Beef, Bacon, Cheddar, Provolone, and Mozzarella.</p> <div class="item-options"> <label><input type="radio" name="janes_bacon_cheeseburger_pizza_size_9" value="Large (14&quot;)" data-price="17.99" checked> Large (14")</label> <label><input type="radio" name="janes_bacon_cheeseburger_pizza_size_9" value="XL (18&quot;)" data-price="25.99"> Extra Large (18")</label> </div> </div> <div class="add-to-cart-area"> <span class="item-price">$17.99</span> <button class="add-to-cart-btn">Add</button> </div> </div>
+              <div class="menu-item" data-id="spinach-pizza" data-name="Spinach Pizza"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Spinach Pizza</span> <p class="item-description">Spinach, Tomato, Onion, and Fresh Garlic.</p> <div class="item-options"> <label><input type="radio" name="spinach_pizza_size_10" value="Large (14&quot;)" data-price="17.99" checked> Large (14")</label> <label><input type="radio" name="spinach_pizza_size_10" value="XL (18&quot;)" data-price="25.99"> Extra Large (18")</label> </div> </div> <div class="add-to-cart-area"> <span class="item-price">$17.99</span> <button class="add-to-cart-btn">Add</button> </div> </div>
+              <div class="menu-item" data-id="janes-supreme-pizza" data-name="Jane's Supreme Pizza"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Jane's Supreme</span> <p class="item-description">Pepperoni, Sausage, Mushrooms, Onions, and Green Peppers.</p> <div class="item-options"> <label><input type="radio" name="janes_supreme_pizza_size_11" value="Large (14&quot;)" data-price="17.99" checked> Large (14")</label> <label><input type="radio" name="janes_supreme_pizza_size_11" value="XL (18&quot;)" data-price="25.99"> Extra Large (18")</label> </div> </div> <div class="add-to-cart-area"> <span class="item-price">$17.99</span> <button class="add-to-cart-btn">Add</button> </div> </div>
+              <div class="menu-item" data-id="janes-meat-feast-pizza" data-name="Jane's Meat Feast Pizza"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Jane's Meat Feast</span> <p class="item-description">Pepperoni, Italian Sausage, Ham, Ground Beef, and Bacon.</p> <div class="item-options"> <label><input type="radio" name="janes_meat_feast_pizza_size_12" value="Large (14&quot;)" data-price="17.99" checked> Large (14")</label> <label><input type="radio" name="janes_meat_feast_pizza_size_12" value="XL (18&quot;)" data-price="25.99"> Extra Large (18")</label> </div> </div> <div class="add-to-cart-area"> <span class="item-price">$17.99</span> <button class="add-to-cart-btn">Add</button> </div> </div>
+              <div class="menu-item" data-id="quesadilla-pizza" data-name="Quesadilla Pizza"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Quesadilla Pizza</span> <p class="item-description">Topped with Grilled Chicken, Tomatoes. Green Peppers, White Sauce, and seasoning.</p> <div class="item-options"> <label><input type="radio" name="quesadilla_pizza_size_13" value="Large (14&quot;)" data-price="17.99" checked> Large (14")</label> <label><input type="radio" name="quesadilla_pizza_size_13" value="XL (18&quot;)" data-price="25.99"> Extra Large (18")</label> </div> </div> <div class="add-to-cart-area"> <span class="item-price">$17.99</span> <button class="add-to-cart-btn">Add</button> </div> </div>
+              <div class="menu-item" data-id="janes-favorite-pizza" data-name="Jane's Favorite Pizza"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Jane's Favorite</span> <p class="item-description">Canadian Bacon, Beef, Onions, Mushrooms, Green Peppers, and Black Olives.</p> <div class="item-options"> <label><input type="radio" name="janes_favorite_pizza_size_14" value="Large (14&quot;)" data-price="17.99" checked> Large (14")</label> <label><input type="radio" name="janes_favorite_pizza_size_14" value="XL (18&quot;)" data-price="25.99"> Extra Large (18")</label> </div> </div> <div class="add-to-cart-area"> <span class="item-price">$17.99</span> <button class="add-to-cart-btn">Add</button> </div> </div>
+         </section>
 
-             <div class="menu-item" data-id="white-pizza" data-name="White Pizza">
-                <div class="item-image-placeholder"></div>
-                <div class="item-details">
-                    <span class="item-name">White Pizza</span>
-                    <p class="item-description">Olive Oil, Provolone, Mozzarella, Parmesan Cheese, Beef, Oregano, Basil, Onions, Green Peppers, Tomatos.</p>
-                     <div class="item-options">
-                         <label><input type="radio" name="white_pizza_size" value="large" data-price="17.99" checked> Large (14")</label>
-                         <label><input type="radio" name="white_pizza_size" value="xlarge" data-price="25.99"> Extra Large (18")</label>
-                     </div>
-                </div>
-                 <div class="add-to-cart-area">
-                     <span class="item-price">$17.99</span>
-                     <button class="add-to-cart-btn">Add</button>
-                 </div>
-            </div>
-             <div class="menu-item" data-id="greek-pizza" data-name="Greek Pizza">
-                 <div class="item-image-placeholder"></div>
-                 <div class="item-details">
-                     <span class="item-name">Greek Pizza</span>
-                     <p class="item-description">Olive Oil, Fresh Garlic, Oregano, Feta Cheese, Onion, Black Olives, and Tomatoes.</p>
-                      <div class="item-options">
-                         <label><input type="radio" name="greek_pizza_size" value="large" data-price="17.99" checked> Large (14")</label>
-                         <label><input type="radio" name="greek_pizza_size" value="xlarge" data-price="25.99"> Extra Large (18")</label>
-                      </div>
-                 </div>
-                  <div class="add-to-cart-area">
-                      <span class="item-price">$17.99</span>
-                      <button class="add-to-cart-btn">Add</button>
-                  </div>
-             </div>
-             </section>
-
-         <section id="wings" class="menu-category">
-            <h2>Wings</h2>
-            <p>Sauces: Hartsville Hot, Garlic Parmesan, Buffalo, Sweet BBQ, and Jamaican Jerk.</p>
-             <div class="menu-item" data-id="wings" data-name="Wings">
-                 <div class="item-image-placeholder"></div>
-                 <div class="item-details">
-                     <span class="item-name">Wings</span>
-                     <div class="item-options">
-                          <label for="wing-size">Size:</label>
-                          <select name="wing_size" class="wing-size-select">
-                              <option value="6pc" data-price="8.99">6 Piece</option>
-                              <option value="10pc" data-price="13.99">10 Piece</option>
-                              <option value="20pc" data-price="24.99">20 Piece</option>
-                              <option value="50pc" data-price="49.99">50 Piece</option>
-                          </select>
-                          <label for="wing-sauce">Sauce:</label>
-                          <select name="wing_sauce" class="wing-sauce-select">
-                              <option value="Hartsville Hot">Hartsville Hot</option>
-                              <option value="Garlic Parmesan">Garlic Parmesan</option>
-                              <option value="Buffalo">Buffalo</option>
-                              <option value="Sweet BBQ">Sweet BBQ</option>
-                              <option value="Jamaican Jerk">Jamaican Jerk</option>
-                          </select>
-                     </div>
-                 </div>
-                  <div class="add-to-cart-area">
-                       <span class="item-price">$8.99</span> <button class="add-to-cart-btn">Add</button>
-                  </div>
-             </div>
+        <section id="calzone-stromboli" class="menu-category">
+             <h2>Calzone & Stromboli</h2>
+             <div class="menu-item" data-id="janes-calzone" data-name="Jane's Calzone"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Jane's Calzone</span> <p class="item-description">Pepperoni, Sausage, Mushrooms, Mozzarella, Ricotta Cheese, topped with Parmesan.</p> <div class="item-options"> <label><input type="radio" name="janes_calzone_size_15" value="Small" data-price="13.99" checked> Small</label> <label><input type="radio" name="janes_calzone_size_15" value="Medium" data-price="15.99"> Medium</label> <label><input type="radio" name="janes_calzone_size_15" value="Large" data-price="17.99"> Large</label> </div> </div> <div class="add-to-cart-area"> <span class="item-price">$13.99</span> <button class="add-to-cart-btn">Add</button> </div> </div>
+              <div class="menu-item" data-id="cheese-calzone" data-name="Cheese Calzone"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Cheese Calzone</span> <p class="item-description">Mozzarella, Ricotta, and topped with Parmesan. you can also customize this.</p> <div class="item-options"> <label><input type="radio" name="cheese_calzone_size_16" value="Small" data-price="13.99" checked> Small</label> <label><input type="radio" name="cheese_calzone_size_16" value="Medium" data-price="15.99"> Medium</label> <label><input type="radio" name="cheese_calzone_size_16" value="Large" data-price="17.99"> Large</label> </div> </div> <div class="add-to-cart-area"> <span class="item-price">$13.99</span> <button class="add-to-cart-btn">Add</button> </div> </div>
+              <div class="menu-item" data-id="spinach-calzone" data-name="Spinach Calzone"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Spinach Calzone</span> <p class="item-description">Mozzarella, Spinach, Ricotta and topped with Parmesan.</p> <div class="item-options"> <label><input type="radio" name="spinach_calzone_size_17" value="Small" data-price="13.99" checked> Small</label> <label><input type="radio" name="spinach_calzone_size_17" value="Medium" data-price="15.99"> Medium</label> <label><input type="radio" name="spinach_calzone_size_17" value="Large" data-price="17.99"> Large</label> </div> </div> <div class="add-to-cart-area"> <span class="item-price">$13.99</span> <button class="add-to-cart-btn">Add</button> </div> </div>
+              <div class="menu-item" data-id="janes-stromboli" data-name="Jane's Stromboli"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Jane's Stromboli</span> <p class="item-description">Pepperoni, Sausage, Onions, Mushrooms, Green Peppers, Mozzarella, and topped with Parmesan.</p> <div class="item-options"> <label><input type="radio" name="janes_stromboli_size_18" value="Small" data-price="13.99" checked> Small</label> <label><input type="radio" name="janes_stromboli_size_18" value="Medium" data-price="15.99"> Medium</label> <label><input type="radio" name="janes_stromboli_size_18" value="Large" data-price="17.99"> Large</label> </div> </div> <div class="add-to-cart-area"> <span class="item-price">$13.99</span> <button class="add-to-cart-btn">Add</button> </div> </div>
         </section>
 
-        </div><div class="cart-container">
+        <section id="wings" class="menu-category">
+             <h2>Wings</h2>
+             <p>Sauces: Hartsville Hot, Garlic Parmesan, Buffalo, Sweet BBQ, and Jamaican Jerk.</p>
+             <div class="menu-item" data-id="wings" data-name="Wings"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Wings</span> <div class="item-options"> <label for="wing-size">Size:</label> <select name="wing_size" class="wing-size-select"> <option value="6 Piece" data-price="8.99">6 Piece</option> <option value="10 Piece" data-price="13.99">10 Piece</option> <option value="20 Piece" data-price="24.99">20 Piece</option> <option value="50 Piece" data-price="49.99">50 Piece</option> </select> <label for="wing-sauce">Sauce:</label> <select name="wing_sauce" class="wing-sauce-select"> <option value="Hartsville Hot">Hartsville Hot</option> <option value="Garlic Parmesan">Garlic Parmesan</option> <option value="Buffalo">Buffalo</option> <option value="Sweet BBQ">Sweet BBQ</option> <option value="Jamaican Jerk">Jamaican Jerk</option> </select> </div> </div> <div class="add-to-cart-area"> <span class="item-price">$8.99</span> <button class="add-to-cart-btn">Add</button> </div> </div>
+        </section>
+
+        <section id="dress-your-own" class="menu-category">
+            <h2>Dress Your Own Pizza</h2>
+             <div class="menu-item" data-id="byo-pizza" data-name="Build Your Own Pizza"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Build Your Own Cheese Pizza</span> <div class="item-options"> <label>Select Size (Base Price):</label> <label><input type="radio" name="byo_size" value="Small (10&quot;)" data-price="9.99" data-topprice="0.99" checked> Small (10") - $9.99</label> <label><input type="radio" name="byo_size" value="Medium (12&quot;)" data-price="11.99" data-topprice="1.49"> Medium (12") - $11.99</label> <label><input type="radio" name="byo_size" value="Large (14&quot;)" data-price="13.99" data-topprice="1.99"> Large (14") - $13.99</label> <label><input type="radio" name="byo_size" value="XL (18&quot;)" data-price="16.99" data-topprice="2.99"> Extra Large (18") - $16.99</label> </div> <div class="item-options toppings-list"> <label>Choose Toppings (S $.99 M $1.49 L $1.99 XL $2.99 per topping):</label> <ul style="list-style: none; padding: 0; column-count: 2;"> <li><label><input type="checkbox" name="toppings" value="Pepperoni"> Pepperoni</label></li> <li><label><input type="checkbox" name="toppings" value="Mushrooms"> Mushrooms</label></li> <li><label><input type="checkbox" name="toppings" value="Green Peppers"> Green Peppers</label></li> <li><label><input type="checkbox" name="toppings" value="Banana Peppers"> Banana Peppers</label></li> <li><label><input type="checkbox" name="toppings" value="Onions"> Onions</label></li> <li><label><input type="checkbox" name="toppings" value="Green Olives"> Green Olives</label></li> <li><label><input type="checkbox" name="toppings" value="Black Olives"> Black Olives</label></li> <li><label><input type="checkbox" name="toppings" value="Tomatos"> Tomatos</label></li> <li><label><input type="checkbox" name="toppings" value="Sausage"> Sausage</label></li> <li><label><input type="checkbox" name="toppings" value="Beef"> Beef</label></li> <li><label><input type="checkbox" name="toppings" value="Canadian Bacon"> Canadian Bacon</label></li> <li><label><input type="checkbox" name="toppings" value="Ham"> Ham</label></li> <li><label><input type="checkbox" name="toppings" value="Bacon"> Bacon</label></li> <li><label><input type="checkbox" name="toppings" value="Fresh Garlic"> Fresh Garlic</label></li> </ul> </div> </div> <div class="add-to-cart-area"> <span class="item-price">$9.99</span> <button class="add-to-cart-btn">Add</button> </div> </div>
+        </section>
+
+        <section id="subs" class="menu-category">
+             <h2>Jane's Submarine Sandwiches</h2>
+             <div class="menu-item" data-id="hot-chicken-sub" data-name="Hartsville Hot Chicken Sub" data-price="9.99"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Hartsville Hot Chicken</span> <p class="item-description">Breaded Chicken Breast, and topped with Our Signature Hartsville Hot Seasoning.</p> <span class="item-price">$9.99</span> </div> <div class="add-to-cart-area"><button class="add-to-cart-btn">Add</button></div> </div>
+              <div class="menu-item" data-id="philly-sub" data-name="Philly Cheese Steak Sub" data-price="9.99"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Philly Cheese Steak Sub</span> <p class="item-description">Philly Steak, Onions, and Green Peppers.</p> <span class="item-price">$9.99</span> </div> <div class="add-to-cart-area"><button class="add-to-cart-btn">Add</button></div> </div>
+              <div class="menu-item" data-id="italian-sub" data-name="Italian Sub" data-price="9.99"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Italian Sub</span> <p class="item-description">Pepperoni, Ham, Salami, Cheese, Lettuce, and Tomato.</p> <span class="item-price">$9.99</span> </div> <div class="add-to-cart-area"><button class="add-to-cart-btn">Add</button></div> </div>
+              <div class="menu-item" data-id="meatball-sub" data-name="Meatball Sub" data-price="9.99"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Meatball Sub</span> <p class="item-description">Marinara, Sliced Meatballs, Parmesan Cheese, Provolone, and Mozzarella.</p> <span class="item-price">$9.99</span> </div> <div class="add-to-cart-area"><button class="add-to-cart-btn">Add</button></div> </div>
+              <div class="menu-item" data-id="grilled-chicken-sub" data-name="Grilled Chicken Sub" data-price="9.99"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Grilled Chicken Sub</span> <p class="item-description">Grilled Chicken, Cheese, Green Peppers, Onions.</p> <span class="item-price">$9.99</span> </div> <div class="add-to-cart-area"><button class="add-to-cart-btn">Add</button></div> </div>
+        </section>
+
+        <section id="salads" class="menu-category">
+            <h2>Jane's Delicious Salads</h2>
+            <p>Dressings: French, Ranch, Italian, Honey Mustard, Balsamic Vinaigrette, and Thousand Island.</p>
+             <div class="menu-item" data-id="house-salad" data-name="House Salad" data-price="8.99"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">House Salad</span> <p class="item-description">Lettuce, Tomato, Onion, Green Peppers, Black and Green Olives, Topped with cheese.</p> <span class="item-price">$8.99</span> <div class="item-options"> <label for="house_salad_dressing">Dressing:</label> <select name="salad_dressing" class="salad-dressing-select"> <option value="French">French</option> <option value="Ranch">Ranch</option> <option value="Italian">Italian</option> <option value="Honey Mustard">Honey Mustard</option> <option value="Balsamic Vinaigrette">Balsamic Vinaigrette</option> <option value="Thousand Island">Thousand Island</option> </select> </div> </div> <div class="add-to-cart-area"><button class="add-to-cart-btn">Add</button></div> </div>
+              <div class="menu-item" data-id="antipasto-salad" data-name="Antipasto Salad" data-price="9.99"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Antipasto Salad</span> <p class="item-description">Lettuce, Tomato, Onion, Green Peppers, Black and Green Olives, Ham, Salami, and Pepperoni Topped with cheese.</p> <span class="item-price">$9.99</span> <div class="item-options"> <label for="antipasto_salad_dressing">Dressing:</label> <select name="salad_dressing" class="salad-dressing-select"> <option value="French">French</option> <option value="Ranch">Ranch</option> <option value="Italian">Italian</option> <option value="Honey Mustard">Honey Mustard</option> <option value="Balsamic Vinaigrette">Balsamic Vinaigrette</option> <option value="Thousand Island">Thousand Island</option> </select> </div> </div> <div class="add-to-cart-area"><button class="add-to-cart-btn">Add</button></div> </div>
+              <div class="menu-item" data-id="greek-salad" data-name="Greek Salad" data-price="9.99"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Greek Salad</span> <p class="item-description">Lettuce, Tomato, Onion, Green Peppers, Black and Green Olives, Feta Cheese Topped with cheese.</p> <span class="item-price">$9.99</span> <div class="item-options"> <label for="greek_salad_dressing">Dressing:</label> <select name="salad_dressing" class="salad-dressing-select"> <option value="French">French</option> <option value="Ranch">Ranch</option> <option value="Italian">Italian</option> <option value="Honey Mustard">Honey Mustard</option> <option value="Balsamic Vinaigrette">Balsamic Vinaigrette</option> <option value="Thousand Island">Thousand Island</option> </select> </div> </div> <div class="add-to-cart-area"><button class="add-to-cart-btn">Add</button></div> </div>
+              <div class="menu-item" data-id="grilled-chicken-salad" data-name="Grilled Chicken Salad" data-price="9.99"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Grilled Chicken Salad</span> <p class="item-description">Lettuce, Tomato, Onion, Green Peppers, Black and Green Olives, Grilled Chicken Topped with cheese.</p> <span class="item-price">$9.99</span> <div class="item-options"> <label for="chicken_salad_dressing">Dressing:</label> <select name="salad_dressing" class="salad-dressing-select"> <option value="French">French</option> <option value="Ranch">Ranch</option> <option value="Italian">Italian</option> <option value="Honey Mustard">Honey Mustard</option> <option value="Balsamic Vinaigrette">Balsamic Vinaigrette</option> <option value="Thousand Island">Thousand Island</option> </select> </div> </div> <div class="add-to-cart-area"><button class="add-to-cart-btn">Add</button></div> </div>
+              <div class="menu-item" data-id="chef-salad" data-name="Chef Salad" data-price="9.99"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Chef Salad</span> <p class="item-description">Lettuce, Tomato, Onion, Green Peppers, Black and Green Olives, Turkey, Ham, Topped with cheese.</p> <span class="item-price">$9.99</span> <div class="item-options"> <label for="chef_salad_dressing">Dressing:</label> <select name="salad_dressing" class="salad-dressing-select"> <option value="French">French</option> <option value="Ranch">Ranch</option> <option value="Italian">Italian</option> <option value="Honey Mustard">Honey Mustard</option> <option value="Balsamic Vinaigrette">Balsamic Vinaigrette</option> <option value="Thousand Island">Thousand Island</option> </select> </div> </div> <div class="add-to-cart-area"><button class="add-to-cart-btn">Add</button></div> </div>
+        </section>
+
+        <section id="pastas" class="menu-category">
+            <h2>Jane's Favorite Pastas</h2>
+            <p>All Pastas come with 2 Bread Sticks and a Side Salad. Select dressing for salad below.</p>
+             <div class="menu-item" data-id="baked-spaghetti" data-name="Jane's Baked Spaghetti" data-price="12.99"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Jane's Baked Spaghetti</span> <span class="item-price">$12.99</span> <div class="item-options"> <label><input type="checkbox" name="add_meatballs" data-addon-price="3.99"> Add Meatballs (+$3.99)</label> <label><input type="checkbox" name="add_sausage" data-addon-price="3.99"> Add Italian Sausage (+$3.99)</label> <label for="spaghetti_salad_dressing">Salad Dressing:</label> <select name="salad_dressing" class="salad-dressing-select"> <option value="French">French</option> <option value="Ranch">Ranch</option> <option value="Italian">Italian</option> <option value="Honey Mustard">Honey Mustard</option> <option value="Balsamic Vinaigrette">Balsamic Vinaigrette</option> <option value="Thousand Island">Thousand Island</option> </select> </div> </div> <div class="add-to-cart-area"><button class="add-to-cart-btn">Add</button></div> </div>
+              <div class="menu-item" data-id="baked-ziti" data-name="Jane's Baked Ziti" data-price="12.99"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Jane's Baked Ziti</span> <span class="item-price">$12.99</span> <div class="item-options"> <label><input type="checkbox" name="add_meatballs" data-addon-price="3.99"> Add Meatballs (+$3.99)</label> <label><input type="checkbox" name="add_sausage" data-addon-price="3.99"> Add Italian Sausage (+$3.99)</label> <label for="ziti_salad_dressing">Salad Dressing:</label> <select name="salad_dressing" class="salad-dressing-select"> <option value="French">French</option> <option value="Ranch">Ranch</option> <option value="Italian">Italian</option> <option value="Honey Mustard">Honey Mustard</option> <option value="Balsamic Vinaigrette">Balsamic Vinaigrette</option> <option value="Thousand Island">Thousand Island</option> </select> </div> </div> <div class="add-to-cart-area"><button class="add-to-cart-btn">Add</button></div> </div>
+              <div class="menu-item" data-id="lasagna" data-name="Jane's Lasagna" data-price="14.99"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Jane's Lasagna</span> <span class="item-price">$14.99</span> <div class="item-options"> <label for="lasagna_salad_dressing">Salad Dressing:</label> <select name="salad_dressing" class="salad-dressing-select"> <option value="French">French</option> <option value="Ranch">Ranch</option> <option value="Italian">Italian</option> <option value="Honey Mustard">Honey Mustard</option> <option value="Balsamic Vinaigrette">Balsamic Vinaigrette</option> <option value="Thousand Island">Thousand Island</option> </select> </div> </div> <div class="add-to-cart-area"><button class="add-to-cart-btn">Add</button></div> </div>
+              <div class="menu-item" data-id="chicken-alfredo" data-name="Jane's Chicken Fettuccine Alfredo" data-price="15.99"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Jane's Chicken Fettuccine Alfredo</span> <span class="item-price">$15.99</span> <div class="item-options"> <label for="alfredo_salad_dressing">Salad Dressing:</label> <select name="salad_dressing" class="salad-dressing-select"> <option value="French">French</option> <option value="Ranch">Ranch</option> <option value="Italian">Italian</option> <option value="Honey Mustard">Honey Mustard</option> <option value="Balsamic Vinaigrette">Balsamic Vinaigrette</option> <option value="Thousand Island">Thousand Island</option> </select> </div> </div> <div class="add-to-cart-area"><button class="add-to-cart-btn">Add</button></div> </div>
+              <div class="menu-item" data-id="chicken-parm" data-name="Jane's Chicken Parmesan" data-price="15.99"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Jane's Chicken Parmesan</span> <span class="item-price">$15.99</span> <div class="item-options"> <label for="parm_salad_dressing">Salad Dressing:</label> <select name="salad_dressing" class="salad-dressing-select"> <option value="French">French</option> <option value="Ranch">Ranch</option> <option value="Italian">Italian</option> <option value="Honey Mustard">Honey Mustard</option> <option value="Balsamic Vinaigrette">Balsamic Vinaigrette</option> <option value="Thousand Island">Thousand Island</option> </select> </div> </div> <div class="add-to-cart-area"><button class="add-to-cart-btn">Add</button></div> </div>
+        </section>
+
+        <section id="desserts" class="menu-category">
+            <h2>Jane's Desserts</h2>
+             <div class="menu-item" data-id="cheesecake" data-name="Cheese Cake" data-price="5.99"> <div class="item-image-placeholder"></div><div class="item-details"><span class="item-name">Cheese Cake</span><span class="item-price">$5.99</span></div><div class="add-to-cart-area"><button class="add-to-cart-btn">Add</button></div> </div>
+             <div class="menu-item" data-id="cannoli" data-name="Cannoli" data-price="3.99"> <div class="item-image-placeholder"></div><div class="item-details"><span class="item-name">Cannoli</span><span class="item-price">$3.99</span></div><div class="add-to-cart-area"><button class="add-to-cart-btn">Add</button></div> </div>
+             <div class="menu-item" data-id="tiramisu" data-name="Tiramisu" data-price="4.99"> <div class="item-image-placeholder"></div><div class="item-details"><span class="item-name">Tiramisu</span><span class="item-price">$4.99</span></div><div class="add-to-cart-area"><button class="add-to-cart-btn">Add</button></div> </div>
+             <div class="menu-item" data-id="milky-way" data-name="Milky Way Galaxy" data-price="5.99"> <div class="item-image-placeholder"></div><div class="item-details"><span class="item-name">Milky Way Galaxy</span><span class="item-price">$5.99</span></div><div class="add-to-cart-area"><button class="add-to-cart-btn">Add</button></div> </div>
+             <div class="menu-item" data-id="strawberry-dessert" data-name="Strawberry" data-price="5.99"> <div class="item-image-placeholder"></div><div class="item-details"><span class="item-name">Strawberry</span><span class="item-price">$5.99</span></div><div class="add-to-cart-area"><button class="add-to-cart-btn">Add</button></div> </div>
+             <div class="menu-item" data-id="pb-chocolate-dessert" data-name="Peanut Butter Chocolate" data-price="5.99"> <div class="item-image-placeholder"></div><div class="item-details"><span class="item-name">Peanut Butter Chocolate</span><span class="item-price">$5.99</span></div><div class="add-to-cart-area"><button class="add-to-cart-btn">Add</button></div> </div>
+             <div class="menu-item" data-id="coconut-cloud-dessert" data-name="Coconut Cloud" data-price="5.99"> <div class="item-image-placeholder"></div><div class="item-details"><span class="item-name">Coconut Cloud</span><span class="item-price">$5.99</span></div><div class="add-to-cart-area"><button class="add-to-cart-btn">Add</button></div> </div>
+             <div class="menu-item" data-id="limoncello-dessert" data-name="Limoncello" data-price="5.99"> <div class="item-image-placeholder"></div><div class="item-details"><span class="item-name">Limoncello</span><span class="item-price">$5.99</span></div><div class="add-to-cart-area"><button class="add-to-cart-btn">Add</button></div> </div>
+             <div class="menu-item" data-id="chocolate-cannoli" data-name="Chocolate Cannoli" data-price="5.99"> <div class="item-image-placeholder"></div><div class="item-details"><span class="item-name">Chocolate Cannoli</span><span class="item-price">$5.99</span></div><div class="add-to-cart-area"><button class="add-to-cart-btn">Add</button></div> </div>
+        </section>
+
+    </div><div class="cart-container">
         <h2>Your Order</h2>
         <div id="cart-items">
-            <p>Your cart is empty.</p>
-            <ul></ul>
+            <p style="display: block;">Your cart is empty.</p>
+            <ul style="display: none;"></ul>
         </div>
         <div id="cart-total">
             Total: $0.00
         </div>
-        <button id="checkout-btn" style="display: none;">Proceed to Checkout</button>
-         </div></div><script>
-    // Simple Cart Logic (Client-Side Only)
-    let cart = [];
-    const cartItemsContainer = document.getElementById('cart-items').querySelector('ul');
-    const cartTotalElement = document.getElementById('cart-total');
-    const cartContainer = document.querySelector('.cart-container'); // To hide initial message
-    const checkoutButton = document.getElementById('checkout-btn');
+        <button id="checkout-btn" class="hidden">Proceed to Checkout</button>
+    </div></div><div id="checkout-view" class="hidden"> <h2>Checkout</h2>
+     <form id="checkout-form">
+         <h3>Your Information</h3>
+         <label for="name">Name:</label><input type="text" id="name" name="name" required><br>
+         <label for="phone">Phone:</label><input type="tel" id="phone" name="phone" required><br>
+         <label for="email">Email:</label><input type="email" id="email" name="email"><br>
 
-    // --- Event Listener for Add Buttons ---
+         <h3>Delivery or Pickup?</h3>
+         <div class="delivery-options">
+             <label><input type="radio" name="order_type" value="pickup" checked> Pickup</label>
+             <label><input type="radio" name="order_type" value="delivery"> Delivery</label>
+         </div>
+          <div id="delivery-address" class="hidden" style="margin-top: 15px;">
+             <label for="address">Address:</label><input type="text" id="address" name="address"><br>
+             <label for="city">City:</label><input type="text" id="city" name="city"><br>
+             <label for="zip">Zip Code:</label><input type="text" id="zip" name="zip"><br>
+         </div>
+
+          <h3>Order Summary</h3>
+         <div id="checkout-summary">
+             <h4>Items</h4>
+             <div id="checkout-summary-items"></div>
+             <div class="total">
+                 <span>Total:</span>
+                 <span id="checkout-summary-total">$0.00</span>
+             </div>
+         </div>
+
+         <h3>Payment</h3>
+         <p>Enter card details below:</p>
+         <div id="card-element"></div>
+         <div id="card-errors" role="alert"></div>
+
+         <button type="submit" id="submit-order-btn">Place Order & Pay</button>
+     </form>
+      <button id="back-to-menu-btn">Back to Menu</button>
+ </div>
+
+
+<script>
+    // --- Theme Switcher ---
+    const themeSwitcher = document.getElementById('theme-switcher');
+    const body = document.body;
+
+    function applyTheme(theme) {
+        if (theme === 'light') {
+            body.classList.add('light-mode');
+            themeSwitcher.textContent = 'Dark Mode';
+        } else {
+            body.classList.remove('light-mode');
+            themeSwitcher.textContent = 'Light Mode';
+        }
+    }
+
+    // Apply saved theme or default to dark
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    applyTheme(savedTheme); // Apply theme on load
+
+    themeSwitcher.addEventListener('click', () => {
+        let currentTheme = body.classList.contains('light-mode') ? 'light' : 'dark';
+        let newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        applyTheme(newTheme);
+        localStorage.setItem('theme', newTheme);
+    });
+
+
+    // --- Cart Logic ---
+    let cart = [];
+    const cartItemsList = document.getElementById('cart-items').querySelector('ul');
+    const cartItemsEmptyMsg = document.getElementById('cart-items').querySelector('p');
+    const cartTotalElement = document.getElementById('cart-total');
+    const checkoutButton = document.getElementById('checkout-btn');
+    const mainContent = document.getElementById('main-content');
+    const checkoutView = document.getElementById('checkout-view');
+    const backToMenuButton = document.getElementById('back-to-menu-btn');
+
     document.querySelectorAll('.add-to-cart-btn').forEach(button => {
         button.addEventListener('click', (event) => {
             const menuItemElement = event.target.closest('.menu-item');
@@ -364,124 +385,182 @@
         });
     });
 
-     // --- Event Listener for Dynamic Price Updates (Example for Wings Size) ---
-    // More complex logic needed for all items (e.g., radio buttons for pizzas)
-    document.querySelectorAll('.wing-size-select').forEach(select => {
-        select.addEventListener('change', (event) => {
-            const selectedOption = event.target.options[event.target.selectedIndex];
-            const price = selectedOption.getAttribute('data-price');
-            const menuItemElement = event.target.closest('.menu-item');
-            menuItemElement.querySelector('.item-price').textContent = `$${parseFloat(price).toFixed(2)}`;
-        });
-    });
-    // Similar listeners would be needed for pizza size radio buttons etc. to update the displayed price
+     function updateDisplayedPrice(itemElement) {
+        let price = 0;
+        const basePriceAttr = itemElement.getAttribute('data-price');
+        let basePrice = basePriceAttr ? parseFloat(basePriceAttr) : 0;
+        price = basePrice;
 
+        const radioSelected = itemElement.querySelector('input[type="radio"]:checked');
+        if (radioSelected && radioSelected.hasAttribute('data-price')) {
+             price = parseFloat(radioSelected.getAttribute('data-price'));
+        }
 
-    // --- Add Item to Cart Function ---
+        const selectElement = itemElement.querySelector('select.wing-size-select');
+         if (selectElement) {
+             const selectedOption = selectElement.options[selectElement.selectedIndex];
+             if (selectedOption && selectedOption.hasAttribute('data-price')) {
+                 price = parseFloat(selectedOption.getAttribute('data-price'));
+             }
+         }
+
+         itemElement.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+             if (checkbox.hasAttribute('data-addon-price')) {
+                 price += parseFloat(checkbox.getAttribute('data-addon-price'));
+             }
+         });
+
+         if (itemElement.getAttribute('data-id') === 'byo-pizza') {
+             const sizeRadio = itemElement.querySelector('input[type="radio"][name="byo_size"]:checked');
+             let byoPrice = sizeRadio ? parseFloat(sizeRadio.getAttribute('data-price') || 0) : 0;
+             const toppingPrice = sizeRadio ? parseFloat(sizeRadio.getAttribute('data-topprice') || 0) : 0;
+             const selectedToppings = itemElement.querySelectorAll('input[type="checkbox"][name="toppings"]:checked').length;
+             byoPrice += selectedToppings * toppingPrice;
+             price = byoPrice;
+         }
+
+        const priceDisplay = itemElement.querySelector('.add-to-cart-area .item-price, .item-details .item-price');
+        if(priceDisplay) { priceDisplay.textContent = `$${price.toFixed(2)}`; }
+     }
+
+     document.querySelectorAll('.menu-item input[type="radio"], .menu-item input[type="checkbox"], .menu-item select').forEach(input => {
+         input.addEventListener('change', (event) => {
+             const menuItemElement = event.target.closest('.menu-item');
+             updateDisplayedPrice(menuItemElement);
+         });
+     });
+
     function addToCart(itemElement) {
         const id = itemElement.getAttribute('data-id');
         const name = itemElement.getAttribute('data-name');
-        let basePrice = parseFloat(itemElement.getAttribute('data-price') || 0); // Get base price or 0
-        let price = basePrice;
-        let optionsDescription = []; // To describe selected options in cart
+        let price = 0;
+        let optionsDescription = [];
 
-        // --- Option Handling Examples ---
-        // 1. Checkboxes (e.g., Add Fries for Tenders)
-        const checkbox = itemElement.querySelector('input[type="checkbox"]');
-        if (checkbox && checkbox.checked) {
-            const addonPrice = parseFloat(checkbox.getAttribute('data-addon-price'));
-            price += addonPrice;
-            // Get the label text for description
-             const labelText = checkbox.closest('label')?.textContent.trim() || 'Add-on';
-             optionsDescription.push(labelText.replace(/\(\+\$.*\)/, '').trim()); // Remove price part for display
-        }
-
-        // 2. Radio Buttons (e.g., Pizza Size)
         const radioSelected = itemElement.querySelector('input[type="radio"]:checked');
-        if (radioSelected) {
-             const radioPrice = parseFloat(radioSelected.getAttribute('data-price'));
-             price = radioPrice; // Price is determined by the selected radio option
-             const labelText = radioSelected.closest('label')?.textContent.trim() || radioSelected.value;
-             optionsDescription.push(labelText.replace(/\(\$.*\)/, '').trim()); // Remove price part for display
-        }
-
-        // 3. Select/Dropdowns (e.g., Wings Size/Sauce) - Price from size, description from both
         const wingSizeSelect = itemElement.querySelector('.wing-size-select');
-        if (wingSizeSelect) {
-             const selectedSizeOption = wingSizeSelect.options[wingSizeSelect.selectedIndex];
-             price = parseFloat(selectedSizeOption.getAttribute('data-price'));
-             optionsDescription.push(selectedSizeOption.textContent.trim());
+
+        if (radioSelected && radioSelected.hasAttribute('data-price')) {
+            price = parseFloat(radioSelected.getAttribute('data-price'));
+            const labelText = radioSelected.closest('label')?.textContent.trim().replace(/\s-\s*\$\d+\.\d+$/, '') || radioSelected.value; // Clean label
+            optionsDescription.push(labelText);
+        } else if (wingSizeSelect) {
+            const selectedSizeOption = wingSizeSelect.options[wingSizeSelect.selectedIndex];
+            price = parseFloat(selectedSizeOption.getAttribute('data-price'));
+            optionsDescription.push(selectedSizeOption.textContent.trim());
+        } else {
+             price = parseFloat(itemElement.getAttribute('data-price') || 0);
         }
-         const wingSauceSelect = itemElement.querySelector('.wing-sauce-select');
-         if (wingSauceSelect) {
-              const selectedSauceOption = wingSauceSelect.options[wingSauceSelect.selectedIndex];
-              optionsDescription.push(selectedSauceOption.textContent.trim() + " Sauce");
+
+        itemElement.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+             const labelText = checkbox.closest('label')?.textContent.trim().replace(/\(\+\$.*\)/, '').trim() || checkbox.value;
+             optionsDescription.push(labelText);
+             if (checkbox.hasAttribute('data-addon-price')) {
+                 price += parseFloat(checkbox.getAttribute('data-addon-price'));
+             }
+        });
+
+        itemElement.querySelectorAll('select:not(.wing-size-select)').forEach(select => {
+             const selectedOption = select.options[select.selectedIndex];
+             // Include label if needed: const label = select.closest('.item-options')?.querySelector(`label[for="${select.id}"]`)?.textContent || '';
+             optionsDescription.push(selectedOption.value);
+        });
+
+         if (id === 'byo-pizza') {
+             const sizeRadio = itemElement.querySelector('input[type="radio"][name="byo_size"]:checked');
+             const basePrice = sizeRadio ? parseFloat(sizeRadio.getAttribute('data-price') || 0) : 0;
+             const toppingPrice = sizeRadio ? parseFloat(sizeRadio.getAttribute('data-topprice') || 0) : 0;
+             const selectedToppings = itemElement.querySelectorAll('input[type="checkbox"][name="toppings"]:checked');
+             price = basePrice + (selectedToppings.length * toppingPrice);
+
+             optionsDescription = [sizeRadio ? sizeRadio.value : 'Custom Size'];
+             selectedToppings.forEach(topping => optionsDescription.push(topping.value));
          }
-         // Similar logic for salad dressings, pasta add-ons etc.
 
-        // --- Create Cart Item Object ---
-        // Generate a unique ID for this specific cart entry, including options
-         const cartItemId = `${id}-${Date.now()}-${Math.random()}`; // Simple unique ID
-
-        const cartItem = {
-            cartId: cartItemId, // Unique ID for this instance in the cart
-            id: id,
-            name: name,
-            price: price,
-            options: optionsDescription.join(', ') // Comma-separated string of options
-        };
-
+        const cartItemId = `${id}-${Date.now()}-${Math.random()}`;
+        const cartItem = { cartId: cartItemId, id: id, name: name, price: price, options: optionsDescription.join(', ') };
         cart.push(cartItem);
-        console.log('Cart:', cart); // Log cart to console for debugging
         renderCart();
     }
 
-    // --- Render Cart Function ---
     function renderCart() {
-        // Clear previous items
-        cartItemsContainer.innerHTML = '';
+        cartItemsList.innerHTML = '';
+        let total = 0;
 
         if (cart.length === 0) {
-            cartItemsContainer.innerHTML = '<p>Your cart is empty.</p>';
-             checkoutButton.style.display = 'none'; // Hide checkout button
+             cartItemsEmptyMsg.style.display = 'block';
+             cartItemsList.style.display = 'none';
+             checkoutButton.classList.add('hidden');
         } else {
-             // Hide the initial "empty" message if it exists
-             const emptyMsg = document.getElementById('cart-items').querySelector('p');
-             if(emptyMsg) emptyMsg.style.display = 'none';
-
-            let total = 0;
+             cartItemsEmptyMsg.style.display = 'none';
+             cartItemsList.style.display = 'block';
             cart.forEach(item => {
                 total += item.price;
                 const li = document.createElement('li');
-                li.innerHTML = `
-                    <div class="item-info">
-                        <span>${item.name}</span>
-                        ${item.options ? `<span class="cart-item-options">${item.options}</span>` : ''}
-                    </div>
-                    <span class="item-price">$${item.price.toFixed(2)}</span>
-                    `;
-                // Add a remove button (optional)
-                // const removeBtn = document.createElement('button');
-                // removeBtn.textContent = 'X';
-                // removeBtn.style.marginLeft = '10px';
-                // removeBtn.onclick = () => removeFromCart(item.cartId);
-                // li.appendChild(removeBtn);
-
-                cartItemsContainer.appendChild(li);
+                li.innerHTML = `<div class="item-info"><span>${item.name}</span>${item.options ? `<span class="cart-item-options">${item.options}</span>` : ''}</div><span class="item-price">$${item.price.toFixed(2)}</span>`;
+                cartItemsList.appendChild(li);
             });
-            cartTotalElement.textContent = `Total: $${total.toFixed(2)}`;
-             checkoutButton.style.display = 'block'; // Show checkout button
+             checkoutButton.classList.remove('hidden');
         }
+        cartTotalElement.textContent = `Total: $${total.toFixed(2)}`;
     }
 
-    // --- Remove From Cart Function (Example - Needs Button Added Above) ---
-    // function removeFromCart(cartIdToRemove) {
-    //     cart = cart.filter(item => item.cartId !== cartIdToRemove);
-    //     renderCart();
-    // }
+    // --- Checkout Navigation ---
+    checkoutButton.addEventListener('click', () => {
+        mainContent.classList.add('hidden');
+        checkoutView.classList.remove('hidden');
 
-    // --- Initial Render ---
-    renderCart(); // Render cart on page load (will show empty initially)
+        const summaryItems = document.getElementById('checkout-summary-items');
+        const summaryTotal = document.getElementById('checkout-summary-total');
+        summaryItems.innerHTML = '';
+        let total = 0;
+        cart.forEach(item => {
+            const div = document.createElement('div');
+            div.innerHTML = `<span>${item.name} ${item.options ? `(${item.options})` : ''}</span> <span>$${item.price.toFixed(2)}</span>`;
+            summaryItems.appendChild(div);
+            total += item.price;
+        });
+        summaryTotal.textContent = `$${total.toFixed(2)}`;
+
+        // Placeholder: Initialize Stripe Elements here if needed
+        // setupStripeElements();
+    });
+
+     backToMenuButton.addEventListener('click', () => {
+         checkoutView.classList.add('hidden');
+         mainContent.classList.remove('hidden');
+     });
+
+     // --- Delivery Address Toggle ---
+     document.querySelectorAll('input[name="order_type"]').forEach(radio => {
+         radio.addEventListener('change', (event) => {
+             const deliveryDiv = document.getElementById('delivery-address');
+             const addressInput = document.getElementById('address'); // Target specific input for required attribute
+             if (event.target.value === 'delivery') {
+                 deliveryDiv.classList.remove('hidden');
+                 addressInput.required = true; // Make address required for delivery
+             } else {
+                 deliveryDiv.classList.add('hidden');
+                 addressInput.required = false; // Make address not required for pickup
+             }
+         });
+     });
+
+    // --- Initial Render & Price Calc ---
+    renderCart();
+    document.querySelectorAll('.menu-item').forEach(item => updateDisplayedPrice(item)); // Calculate initial display prices
+
+     // --- Placeholder for Stripe Form Submission ---
+     const checkoutForm = document.getElementById('checkout-form');
+     checkoutForm.addEventListener('submit', event => {
+         event.preventDefault();
+         console.log("Checkout form submitted - Stripe integration needed here!");
+         // Simulate success for now
+         alert("Order Submitted! (Simulation - Payment Integration Needed)");
+         // Clear cart, navigate back to menu or to a success page
+         cart = [];
+         renderCart();
+         backToMenuButton.click(); // Go back to menu view
+     });
 
 </script>
 
