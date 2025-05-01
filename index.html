@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jane's Pizza - Online Ordering</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1, h2, h3 {
+            color: #333;
+            border-bottom: 2px solid #e74c3c;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+        h1 {
+            text-align: center;
+            color: #e74c3c;
+        }
+        .menu-category {
+            margin-bottom: 30px;
+        }
+        .menu-item {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            background-color: #fdfdfd;
+        }
+        .item-name {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #555;
+        }
+        .item-description {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .item-price {
+            font-weight: bold;
+            color: #e74c3c;
+            margin-right: 15px;
+        }
+        .item-options {
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+        .item-options label, .item-options select, .item-options input {
+             margin-right: 10px;
+             display: block;
+             margin-bottom: 5px;
+        }
+         .add-to-cart-btn {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-top: 10px;
+            float: right; /* Align button to the right */
+        }
+        .add-to-cart-btn:hover {
+            background-color: #27ae60;
+        }
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+        .toppings-list ul {
+            list-style: none;
+            padding: 0;
+            column-count: 3; /* Display toppings in columns */
+        }
+        .toppings-list li {
+            margin-bottom: 5px;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Jane's Pizza - Order Online</h1>
+
+    <section id="appetizers" class="menu-category">
+        <h2>Appetizers</h2>
+        <div class="menu-item clearfix">
+            <span class="item-name">Basket Of Fries</span>
+            <button class="add-to-cart-btn">Add to Cart</button> <p class="item-description">Crinkle Cut Fries topped with salt.</p>
+            <span class="item-price">$4.99</span>
+        </div>
+        <div class="menu-item clearfix">
+            <span class="item-name">Chicken Tenders</span>
+             <button class="add-to-cart-btn">Add to Cart</button> <p class="item-description">Five fried chicken tenders.</p>
+            <span class="item-price">$9.99</span>
+            <div class="item-options">
+                <label><input type="checkbox" name="add_fries_tenders"> Add a side of fries (+$1.99)</label> </div>
+        </div>
+         <div class="menu-item clearfix">
+            <span class="item-name">Side Of Fries</span>
+             <button class="add-to-cart-btn">Add to Cart</button> <span class="item-price">$1.99</span>
+        </div>
+        <div class="menu-item clearfix">
+            <span class="item-name">Garlic Bread</span>
+            <button class="add-to-cart-btn">Add to Cart</button> <p class="item-description">Bread brushed with garlic butter, and topped with oregano.</p>
+            <span class="item-price">$3.99</span>
+        </div>
+        <div class="menu-item clearfix">
+            <span class="item-name">Cheese Bread Sticks</span>
+            <button class="add-to-cart-btn">Add to Cart</button> <p class="item-description">Brushed with garlic butter, then topped with Mozzarella, Cheddar, and Parmesan.</p>
+            <span class="item-price">$8.99</span>
+        </div>
+    </section>
+
+    <section id="gourmet-pizzas" class="menu-category">
+        <h2>Jane's Gourmet Pizzas</h2>
+        <p>All gourmet pies are 14" (Large) or request an 18" (Extra Large)!</p>
+        <div class="menu-item clearfix">
+            <span class="item-name">White Pizza</span>
+            <button class="add-to-cart-btn">Add to Cart</button> <p class="item-description">Olive Oil, Provolone, Mozzarella, Parmesan Cheese, Beef, Oregano, Basil, Onions, Green Peppers, Tomatos.</p>
+             <div class="item-options">
+                 <label><input type="radio" name="white_pizza_size" value="large" checked> Large (14") - $17.99</label> <label><input type="radio" name="white_pizza_size" value="xlarge"> Extra Large (18") - $25.99</label> </div>
+        </div>
+        <div class="menu-item clearfix">
+            <span class="item-name">Greek Pizza</span>
+             <button class="add-to-cart-btn">Add to Cart</button> <p class="item-description">Olive Oil, Fresh Garlic, Oregano, Feta Cheese, Onion, Black Olives, and Tomatoes.</p>
+             <div class="item-options">
+                 <label><input type="radio" name="greek_pizza_size" value="large" checked> Large (14") - $17.99</label>
+                 <label><input type="radio" name="greek_pizza_size" value="xlarge"> Extra Large (18") - $25.99</label>
+             </div>
+        </div>
+         <div class="menu-item clearfix">
+            <span class="item-name">BBQ Chicken Pizza</span>
+             <button class="add-to-cart-btn">Add to Cart</button> <p class="item-description">BBQ Sauce, Grilled Chicken, Mozzarella, and Cheddar.</p>
+             <div class="item-options">
+                 <label><input type="radio" name="bbq_chicken_pizza_size" value="large" checked> Large (14") - $17.99</label>
+                 <label><input type="radio" name="bbq_chicken_pizza_size" value="xlarge"> Extra Large (18") - $25.99</label>
+             </div>
+        </div>
+        <div class="menu-item clearfix">
+            <span class="item-name">Meatball Feast Pizza</span>
+             <button class="add-to-cart-btn">Add to Cart</button> <p class="item-description">Marinara, Topped with Provolone, sliced meatballs, oregano, and Parmesan Cheese.</p>
+             <div class="item-options">
+                 <label><input type="radio" name="meatball_pizza_size" value="large" checked> Large (14") - $17.99</label>
+                 <label><input type="radio" name="meatball_pizza_size" value="xlarge"> Extra Large (18") - $25.99</label>
+             </div>
+        </div>
+         <div class="menu-item clearfix">
+            <span class="item-name">Hawaiian Pizza</span>
+             <button class="add-to-cart-btn">Add to Cart</button> <p class="item-description">Pineapple, Ham, and Mushrooms.</p>
+             <div class="item-options">
+                 <label><input type="radio" name="hawaiian_pizza_size" value="large" checked> Large (14") - $17.99</label>
+                 <label><input type="radio" name="hawaiian_pizza_size" value="xlarge"> Extra Large (18") - $25.99</label>
+             </div>
+        </div>
+        <div class="menu-item clearfix">
+            <span class="item-name">Jane's Philly Feast Pizza</span>
+            <button class="add-to-cart-btn">Add to Cart</button> <p class="item-description">Philly Steak, Onions, and Green Peppers.</p>
+             <div class="item-options">
+                 <label><input type="radio" name="philly_pizza_size" value="large" checked> Large (14") - $17.99</label>
+                 <label><input type="radio" name="philly_pizza_size" value="xlarge"> Extra Large (18") - $25.99</label>
+             </div>
+        </div>
+         <div class="menu-item clearfix">
+            <span class="item-name">Jane's Italian Feast Pizza</span>
+             <button class="add-to-cart-btn">Add to Cart</button> <p class="item-description">Italian Link Sausage, Salami, Pepperoni, and Meatballs.</p>
+             <div class="item-options">
+                 <label><input type="radio" name="italian_feast_pizza_size" value="large" checked> Large (14") - $17.99</label>
+                 <label><input type="radio" name="italian_feast_pizza_size" value="xlarge"> Extra Large (18") - $25.99</label>
+             </div>
+        </div>
+         <div class="menu-item clearfix">
+            <span class="item-name">Chicken Bacon Ranch Pizza</span>
+             <button class="add-to-cart-btn">Add to Cart</button> <p class="item-description">Grilled Chicken, Bacon, Ranch, and Onions.</p>
+             <div class="item-options">
+                 <label><input type="radio" name="cbr_pizza_size" value="large" checked> Large (14") - $17.99</label>
+                 <label><input type="radio" name="cbr_pizza_size" value="xlarge"> Extra Large (18") - $25.99</label>
+             </div>
+        </div>
+        <div class="menu-item clearfix">
+            <span class="item-name">Jane's Bacon Cheeseburger Pizza</span>
+            <button class="add-to-cart-btn">Add to Cart</button> <p class="item-description">Ground Beef, Bacon, Cheddar, Provolone, and Mozzarella.</p>
+             <div class="item-options">
+                 <label><input type="radio" name="bacon_burger_pizza_size" value="large" checked> Large (14") - $17.99</label>
+                 <label><input type="radio" name="bacon_burger_pizza_size" value="xlarge"> Extra Large (18") - $25.99</label>
+             </div>
+        </div>
+        <div class="menu-item clearfix">
+            <span class="item-name">Spinach Pizza</span>
+             <button class="add-to-cart-btn">Add to Cart</button> <p class="item-description">Spinach, Tomato, Onion, and Fresh Garlic.</p>
+             <div class="item-options">
+                 <label><input type="radio" name="spinach_pizza_size" value="large" checked> Large (14") - $17.99</label>
+                 <label><input type="radio" name="spinach_pizza_size" value="xlarge"> Extra Large (18") - $25.99</label>
+             </div>
+        </div>
+        <div class="menu-item clearfix">
+            <span class="item-name">Jane's Supreme Pizza</span>
+             <button class="add-to-cart-btn">Add to Cart</button> <p class="item-description">Pepperoni, Sausage, Mushrooms, Onions, and Green Peppers.</p>
+             <div class="item-options">
+                 <label><input type="radio" name="supreme_pizza_size" value="large" checked> Large (14") - $17.99</label>
+                 <label><input type="radio" name="supreme_pizza_size" value="xlarge"> Extra Large (18") - $25.99</label>
+             </div>
+        </div>
+        <div class="menu-item clearfix">
+            <span class="item-name">Jane's Meat Feast Pizza</span>
+             <button class="add-to-cart-btn">Add to Cart</button> <p class="item-description">Pepperoni, Italian Sausage, Ham, Ground Beef, and Bacon.</p>
+             <div class="item-options">
+                 <label><input type="radio" name="meat_feast_pizza_size" value="large" checked> Large (14") - $17.99</label>
+                 <label><input type="radio" name="meat_feast_pizza_size" value="xlarge"> Extra Large (18") - $25.99</label>
+             </div>
+        </div>
+         <div class="menu-item clearfix">
+            <span class="item-name">Quesadilla Pizza</span>
+             <button class="add-to-cart-btn">Add to Cart</button> <p class="item-description">Topped with Grilled Chicken, Tomatoes. Green Peppers, White Sauce, and seasoning.</p>
+             <div class="item-options">
+                 <label><input type="radio" name="quesadilla_pizza_size" value="large" checked> Large (14") - $17.99</label>
+                 <label><input type="radio" name="quesadilla_pizza_size" value="xlarge"> Extra Large (18") - $25.99</label>
+             </div>
+        </div>
+        <div class="menu-item clearfix">
+            <span class="item-name">Jane's Favorite Pizza</span>
+             <button class="add-to-cart-btn">Add to Cart</button> <p class="item-description">Canadian Bacon, Beef, Onions, Mushrooms, Green Peppers, and Black Olives.</p>
+             <div class="item-options">
+                 <label><input type="radio" name="favorite_pizza_size" value="large" checked> Large (14") - $17.99</label>
+                 <label><input type="radio" name="favorite_pizza_size" value="xlarge"> Extra Large (18") - $25.99</label>
+             </div>
+        </div>
+        </section>
+
+     <section id="calzone-stromboli" class="menu-category">
+        <h2>Calzone & Stromboli</h2>
+         <div class="menu-item clearfix">
+            <span class="item-name">Jane's Calzone</span>
+             <button class="add-to-cart-btn">Add to Cart</button> <p class="item-description">Pepperoni, Sausage, Mushrooms, Mozzarella, Ricotta Cheese, topped with Parmesan.</p>
+            <div class="item-options">
+                 <label><input type="radio" name="janes_calzone_size" value="small" checked> Small - $13.99</label>
+                 <label><input type="radio" name="janes_calzone_size" value="medium"> Medium - $15.99</label>
+                 <label><input type="radio" name="janes_calzone_size" value="large"> Large - $17.99</label>
+             </div>
+        </div>
+        <div class="menu-item clearfix">
+            <span class="item-name">Cheese Calzone</span>
+             <button class="add-to-cart-btn">Add to Cart</button> <p class="item-description">Mozzarella, Ricotta, and topped with Parmesan. You can also customize this.</p>
+            <div class="item-options">
+                 <label><input type="radio" name="cheese_calzone_size" value="small" checked> Small - $13.99</label> <label><input type="radio" name="cheese_calzone_size" value="medium"> Medium - $15.99</label>
+                 <label><input type="radio" name="cheese_calzone_size" value="large"> Large - $17.99</label>
+                 <p><i>Customize in cart or special instructions.</i></p> </div>
+        </div>
+         <div class="menu-item clearfix">
+            <span class="item-name">Spinach Calzone</span>
+             <button class="add-to-cart-btn">Add to Cart</button> <p class="item-description">Mozzarella, Spinach, Ricotta and topped with Parmesan.</p>
+             <div class="item-options">
+                 <label><input type="radio" name="spinach_calzone_size" value="small" checked> Small - $13.99</label> <label><input type="radio" name="spinach_calzone_size" value="medium"> Medium - $15.99</label>
+                 <label><input type="radio" name="spinach_calzone_size" value="large"> Large - $17.99</label>
+             </div>
+        </div>
+         <div class="menu-item clearfix">
+            <span class="item-name">Jane's Stromboli</span>
+             <button class="add-to-cart-btn">Add to Cart</button> <p class="item-description">Pepperoni, Sausage, Onions, Mushrooms, Green Peppers, Mozzarella, and topped with Parmesan.</p>
+             <div class="item-options">
+                 <label><input type="radio" name="janes_stromboli_size" value="small" checked> Small - $13.99</label> <label><input type="radio" name="janes_stromboli_size" value="medium"> Medium - $15.99</label>
+                 <label><input type="radio" name="janes_stromboli_size" value="large"> Large - $17.99</label>
+             </div>
+        </div>
+    </section>
+
+     <section id="wings" class="menu-category">
+        <h2>Wings</h2>
+        <p>Sauces: Hartsville Hot, Garlic Parmesan, Buffalo, Sweet BBQ, and Jamaican Jerk.</p>
+        <div class="menu-item clearfix">
+            <span class="item-name">Wings</span>
+            <button class="add-to-cart-btn">Add to Cart</button> <div class="item-options">
+                 <label for="wing-size">Size:</label>
+                 <select name="wing_size" id="wing-size"> <option value="6pc" data-price="8.99">6 Piece - $8.99</option>
+                     <option value="10pc" data-price="13.99">10 Piece - $13.99</option>
+                     <option value="20pc" data-price="24.99">20 Piece - $24.99</option>
+                     <option value="50pc" data-price="49.99">50 Piece - $49.99</option>
+                 </select>
+                 <label for="wing-sauce">Sauce:</label>
+                 <select name="wing_sauce" id="wing-sauce">
+                     <option value="hartsville_hot">Hartsville Hot</option>
+                     <option value="garlic_parmesan">Garlic Parmesan</option>
+                     <option value="buffalo">Buffalo</option>
+                     <option value="sweet_bbq">Sweet BBQ</option>
+                     <option value="jamaican_jerk">Jamaican Jerk</option>
+                 </select>
+            </div>
+        </div>
+    </section>
+
+    <section id="dress-your-own" class="menu-category">
+        <h2>Dress Your Own Pizza</h2>
+         <div class="menu-item clearfix">
+             <span class="item-name">Build Your Own Cheese Pizza</span>
+             <button class="add-to-cart-btn">Add to Cart</button> <div class="item-options">
+                  <label>Select Size (Base Price):</label>
+                  <label><input type="radio" name="byo_size" value="small" data-topprice="0.99" checked> Small (10") - $X.XX</label>
+                  <label><input type="radio" name="byo_size" value="medium" data-topprice="1.49"> Medium (12") - $Y.YY</label>
+                  <label><input type="radio" name="byo_size" value="large" data-topprice="1.99"> Large (14") - $Z.ZZ</label>
+                  <label><input type="radio" name="byo_size" value="xlarge" data-topprice="2.99"> Extra Large (18") - $W.WW</label>
+             </div>
+             <div class="item-options toppings-list">
+                 <label>Choose Toppings (Price per topping based on size above):</label>
+                 <ul>
+                    <li><label><input type="checkbox" name="toppings" value="pepperoni"> Pepperoni</label></li>
+                    <li><label><input type="checkbox" name="toppings" value="mushrooms"> Mushrooms</label></li>
+                    <li><label><input type="checkbox" name="toppings" value="green_peppers"> Green Peppers</label></li>
+                    <li><label><input type="checkbox" name="toppings" value="banana_peppers"> Banana Peppers</label></li>
+                    <li><label><input type="checkbox" name="toppings" value="onions"> Onions</label></li>
+                    <li><label><input type="checkbox" name="toppings" value="green_olives"> Green Olives</label></li>
+                    <li><label><input type="checkbox" name="toppings" value="black_olives"> Black Olives</label></li>
+                    <li><label><input type="checkbox" name="toppings" value="tomatos"> Tomatos</label></li>
+                    <li><label><input type="checkbox" name="toppings" value="sausage"> Sausage</label></li>
+                    <li><label><input type="checkbox" name="toppings" value="beef"> Beef</label></li>
+                    <li><label><input type="checkbox" name="toppings" value="canadian_bacon"> Canadian Bacon</label></li>
+                    <li><label><input type="checkbox" name="toppings" value="ham"> Ham</label></li>
+                    <li><label><input type="checkbox" name="toppings" value="bacon"> Bacon</label></li>
+                    <li><label><input type="checkbox" name="toppings" value="fresh_garlic"> Fresh Garlic</label></li>
+                 </ul>
+             </div>
+        </div>
+    </section>
+
+     <section id="subs" class="menu-category">
+        <h2>Jane's Submarine Sandwiches</h2>
+         <div class="menu-item clearfix">
+            <span class="item-name">Hartsville Hot Chicken Sub</span>
+             <button class="add-to-cart-btn">Add to Cart</button> <p class="item-description">Breaded Chicken Breast, and topped with Our Signature Hartsville Hot Seasoning.</p>
+            <span class="item-price">$9.99</span>
+        </div>
+        <div class="menu-item clearfix">
+            <span class="item-name">Philly Cheese Steak Sub</span>
+            <button class="add-to-cart-btn">Add to Cart</button> <p class="item-description">Philly Steak, Onions, and Green Peppers.</p>
+            <span class="item-price">$9.99</span>
+        </div>
+        <div class="menu-item clearfix">
+            <span class="item-name">Italian Sub</span>
+             <button class="add-to-cart-btn">Add to Cart</button> <p class="item-description">Pepperoni, Ham, Salami, Cheese, Lettuce, and Tomato.</p>
+            <span class="item-price">$9.99</span>
+        </div>
+         <div class="menu-item clearfix">
+            <span class="item-name">Meatball Sub</span>
+             <button class="add-to-cart-btn">Add to Cart</button> <p class="item-description">Marinara, Sliced Meatballs, Parmesan Cheese, Provolone, and Mozzarella.</p>
+            <span class="item-price">$9.99</span>
+        </div>
+         <div class="menu-item clearfix">
+            <span class="item-name">Grilled Chicken Sub</span>
+             <button class="add-to-cart-btn">Add to Cart</button> <p class="item-description">Grilled Chicken, Cheese, Green Peppers, Onions.</p>
+            <span class="item-price">$9.99</span>
+        </div>
+    </section>
+
+     <section id="salads" class="menu-category">
+        <h2>Jane's Delicious Salads</h2>
+        <p>Dressings: French, Ranch, Italian, Honey Mustard, Balsamic Vinaigrette, and Thousand Island.</p>
+        <div class="menu-item clearfix">
+            <span class="item-name">House Salad</span>
+             <button class="add-to-cart-btn">Add to Cart</button> <p class="item-description">Lettuce, Tomato, Onion, Green Peppers, Black and Green Olives, Topped with cheese.</p>
+            <span class="item-price">$8.99</span>
+             <div class="item-options">
+                 <label for="house_salad_dressing">Dressing:</label>
+                 <select name="house_salad_dressing" id="house_salad_dressing">
+                     <option value="french">French</option>
+                     <option value="ranch">Ranch</option>
+                     <option value="italian">Italian</option>
+                     <option value="honey_mustard">Honey Mustard</option>
+                     <option value="balsamic">Balsamic Vinaigrette</option>
+                     <option value="thousand_island">Thousand Island</option>
+                 </select>
+             </div>
+        </div>
+        <div class="menu-item clearfix">
+            <span class="item-name">Antipasto Salad</span>
+             <button class="add-to-cart-btn">Add to Cart</button> <p class="item-description">Lettuce, Tomato, Onion, Green Peppers, Black and Green Olives, Ham, Salami, and Pepperoni Topped with cheese.</p>
+            <span class="item-price">$9.99</span>
+             <div class="item-options">
+                 <label for="antipasto_salad_dressing">Dressing:</label>
+                 <select name="antipasto_salad_dressing" id="antipasto_salad_dressing">
+                    <option value="french">French</option>
+                     <option value="ranch">Ranch</option>
+                     <option value="italian">Italian</option>
+                     <option value="honey_mustard">Honey Mustard</option>
+                     <option value="balsamic">Balsamic Vinaigrette</option>
+                     <option value="thousand_island">Thousand Island</option>
+                 </select>
+             </div>
+        </div>
+         <div class="menu-item clearfix">
+            <span class="item-name">Greek Salad</span>
+             <button class="add-to-cart-btn">Add to Cart</button> <p class="item-description">Lettuce, Tomato, Onion, Green Peppers, Black and Green Olives, Feta Cheese Topped with cheese.</p>
+            <span class="item-price">$9.99</span>
+             <div class="item-options">
+                 <label for="greek_salad_dressing">Dressing:</label>
+                 <select name="greek_salad_dressing" id="greek_salad_dressing">
+                    <option value="french">French</option>
+                     <option value="ranch">Ranch</option>
+                     <option value="italian">Italian</option>
+                     <option value="honey_mustard">Honey Mustard</option>
+                     <option value="balsamic">Balsamic Vinaigrette</option>
+                     <option value="thousand_island">Thousand Island</option>
+                 </select>
+             </div>
+        </div>
+         <div class="menu-item clearfix">
+            <span class="item-name">Grilled Chicken Salad</span>
+             <button class="add-to-cart-btn">Add to Cart</button> <p class="item-description">Lettuce, Tomato, Onion, Green Peppers, Black and Green Olives, Grilled Chicken Topped with cheese.</p>
+            <span class="item-price">$9.99</span>
+             <div class="item-options">
+                 <label for="chicken_salad_dressing">Dressing:</label>
+                 <select name="chicken_salad_dressing" id="chicken_salad_dressing">
+                     <option value="french">French</option>
+                     <option value="ranch">Ranch</option>
+                     <option value="italian">Italian</option>
+                     <option value="honey_mustard">Honey Mustard</option>
+                     <option value="balsamic">Balsamic Vinaigrette</option>
+                     <option value="thousand_island">Thousand Island</option>
+                 </select>
+             </div>
+        </div>
+        <div class="menu-item clearfix">
+            <span class="item-name">Chef Salad</span>
+             <button class="add-to-cart-btn">Add to Cart</button> <p class="item-description">Lettuce, Tomato, Onion, Green Peppers, Black and Green Olives, Turkey, Ham, Topped with cheese.</p>
+            <span class="item-price">$9.99</span>
+             <div class="item-options">
+                 <label for="chef_salad_dressing">Dressing:</label>
+                 <select name="chef_salad_dressing" id="chef_salad_dressing">
+                    <option value="french">French</option>
+                     <option value="ranch">Ranch</option>
+                     <option value="italian">Italian</option>
+                     <option value="honey_mustard">Honey Mustard</option>
+                     <option value="balsamic">Balsamic Vinaigrette</option>
+                     <option value="thousand_island">Thousand Island</option>
+                 </select>
+             </div>
+        </div>
+        </section>
+
+     <section id="pastas" class="menu-category">
+        <h2>Jane's Favorite Pastas</h2>
+        <p>All Pastas come with 2 Bread Sticks and a Side Salad. Select dressing for salad below.</p>
+        <p>Salad Dressings: French, Ranch, Italian, Honey Mustard, Balsamic Vinaigrette, and Thousand Island.</p>
+         <div class="menu-item clearfix">
+            <span class="item-name">Jane's Baked Spaghetti</span>
+             <button class="add-to-cart-btn">Add to Cart</button> <span class="item-price">$12.99</span>
+            <div class="item-options">
+                <label><input type="checkbox" name="add_meatballs_spaghetti"> Add Meatballs (+$3.99)</label> <label><input type="checkbox" name="add_sausage_spaghetti"> Add Italian Sausage (+$3.99)</label> <label for="spaghetti_salad_dressing">Salad Dressing:</label>
+                 <select name="spaghetti_salad_dressing" id="spaghetti_salad_dressing">
+                     <option value="french">French</option>
+                     <option value="ranch">Ranch</option>
+                     <option value="italian">Italian</option>
+                     <option value="honey_mustard">Honey Mustard</option>
+                     <option value="balsamic">Balsamic Vinaigrette</option>
+                     <option value="thousand_island">Thousand Island</option>
+                 </select>
+            </div>
+        </div>
+        <div class="menu-item clearfix">
+            <span class="item-name">Jane's Baked Ziti</span>
+             <button class="add-to-cart-btn">Add to Cart</button> <span class="item-price">$12.99</span>
+             <div class="item-options">
+                <label><input type="checkbox" name="add_meatballs_ziti"> Add Meatballs (+$3.99)</label> <label><input type="checkbox" name="add_sausage_ziti"> Add Italian Sausage (+$3.99)</label> <label for="ziti_salad_dressing">Salad Dressing:</label>
+                 <select name="ziti_salad_dressing" id="ziti_salad_dressing">
+                    <option value="french">French</option>
+                     <option value="ranch">Ranch</option>
+                     <option value="italian">Italian</option>
+                     <option value="honey_mustard">Honey Mustard</option>
+                     <option value="balsamic">Balsamic Vinaigrette</option>
+                     <option value="thousand_island">Thousand Island</option>
+                 </select>
+            </div>
+        </div>
+        <div class="menu-item clearfix">
+            <span class="item-name">Jane's Lasagna</span>
+             <button class="add-to-cart-btn">Add to Cart</button> <span class="item-price">$14.99</span>
+             <div class="item-options">
+                 <label for="lasagna_salad_dressing">Salad Dressing:</label>
+                 <select name="lasagna_salad_dressing" id="lasagna_salad_dressing">
+                    <option value="french">French</option>
+                     <option value="ranch">Ranch</option>
+                     <option value="italian">Italian</option>
+                     <option value="honey_mustard">Honey Mustard</option>
+                     <option value="balsamic">Balsamic Vinaigrette</option>
+                     <option value="thousand_island">Thousand Island</option>
+                 </select>
+            </div>
+        </div>
+        <div class="menu-item clearfix">
+            <span class="item-name">Jane's Chicken Fettuccine Alfredo</span>
+             <button class="add-to-cart-btn">Add to Cart</button> <span class="item-price">$15.99</span>
+             <div class="item-options">
+                 <label for="alfredo_salad_dressing">Salad Dressing:</label>
+                 <select name="alfredo_salad_dressing" id="alfredo_salad_dressing">
+                    <option value="french">French</option>
+                     <option value="ranch">Ranch</option>
+                     <option value="italian">Italian</option>
+                     <option value="honey_mustard">Honey Mustard</option>
+                     <option value="balsamic">Balsamic Vinaigrette</option>
+                     <option value="thousand_island">Thousand Island</option>
+                 </select>
+            </div>
+        </div>
+        <div class="menu-item clearfix">
+            <span class="item-name">Jane's Chicken Parmesan</span>
+             <button class="add-to-cart-btn">Add to Cart</button> <span class="item-price">$15.99</span>
+             <div class="item-options">
+                 <label for="parm_salad_dressing">Salad Dressing:</label>
+                 <select name="parm_salad_dressing" id="parm_salad_dressing">
+                    <option value="french">French</option>
+                     <option value="ranch">Ranch</option>
+                     <option value="italian">Italian</option>
+                     <option value="honey_mustard">Honey Mustard</option>
+                     <option value="balsamic">Balsamic Vinaigrette</option>
+                     <option value="thousand_island">Thousand Island</option>
+                 </select>
+            </div>
+        </div>
+    </section>
+
+     <section id="desserts" class="menu-category">
+        <h2>Jane's Desserts</h2>
+         <div class="menu-item clearfix">
+            <span class="item-name">Cheese Cake</span>
+             <button class="add-to-cart-btn">Add to Cart</button> <span class="item-price">$5.99</span>
+        </div>
+        <div class="menu-item clearfix">
+            <span class="item-name">Cannoli</span>
+            <button class="add-to-cart-btn">Add to Cart</button> <span class="item-price">$3.99</span>
+        </div>
+        <div class="menu-item clearfix">
+            <span class="item-name">Tiramisu</span>
+             <button class="add-to-cart-btn">Add to Cart</button> <span class="item-price">$4.99</span>
+        </div>
+        <div class="menu-item clearfix">
+            <span class="item-name">Milky Way Galaxy</span>
+             <button class="add-to-cart-btn">Add to Cart</button> <span class="item-price">$5.99</span>
+        </div>
+         <div class="menu-item clearfix">
+            <span class="item-name">Strawberry</span>
+             <button class="add-to-cart-btn">Add to Cart</button> <span class="item-price">$5.99</span>
+        </div>
+         <div class="menu-item clearfix">
+            <span class="item-name">Peanut Butter Chocolate</span>
+             <button class="add-to-cart-btn">Add to Cart</button> <span class="item-price">$5.99</span>
+        </div>
+         <div class="menu-item clearfix">
+            <span class="item-name">Coconut Cloud</span>
+             <button class="add-to-cart-btn">Add to Cart</button> <span class="item-price">$5.99</span>
+        </div>
+         <div class="menu-item clearfix">
+            <span class="item-name">Limoncello</span>
+             <button class="add-to-cart-btn">Add to Cart</button> <span class="item-price">$5.99</span>
+        </div>
+         <div class="menu-item clearfix">
+            <span class="item-name">Chocolate Cannoli</span>
+             <button class="add-to-cart-btn">Add to Cart</button> <span class="item-price">$5.99</span>
+        </div>
+    </section>
+
+    <section id="cart" class="menu-category">
+         <h2>Your Order Cart</h2>
+         <div id="cart-items">
+             <p>Your cart is currently empty.</p>
+         </div>
+         <div id="cart-total">
+             <strong>Total: $0.00</strong>
+         </div>
+         <button id="checkout-btn" style="background-color: #3498db; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-top: 20px;">Proceed to Checkout</button> </section>
+
+     <section id="checkout" style="display: none;"> <h2>Checkout</h2>
+         <form id="checkout-form">
+             <h3>Your Information</h3>
+             <label for="name">Name:</label><input type="text" id="name" name="name" required><br>
+             <label for="phone">Phone:</label><input type="tel" id="phone" name="phone" required><br>
+             <label for="email">Email:</label><input type="email" id="email" name="email"><br>
+
+             <h3>Delivery or Pickup?</h3>
+             <label><input type="radio" name="order_type" value="pickup" checked> Pickup</label>
+             <label><input type="radio" name="order_type" value="delivery"> Delivery</label> <div id="delivery-address" style="display: none;"> <label for="address">Address:</label><input type="text" id="address" name="address"><br>
+                 <label for="city">City:</label><input type="text" id="city" name="city"><br>
+                 <label for="zip">Zip Code:</label><input type="text" id="zip" name="zip"><br>
+             </div>
+
+             <h3>Payment</h3>
+             <div id="card-element" style="border: 1px solid #ccc; padding: 10px; margin-top: 10px;">
+                 </div>
+             <div id="card-errors" role="alert" style="color: red; margin-top: 10px;"></div>
+
+             <h3>Order Summary</h3>
+             <div id="checkout-summary">
+                 </div>
+
+             <button type="submit" id="submit-order-btn" style="background-color: #e74c3c; color: white; padding: 12px 25px; border: none; border-radius: 5px; cursor: pointer; margin-top: 20px; font-size: 1.1em;">Place Order</button>
+         </form>
+     </section>
+
+</div>
+
+</body>
+</html>
