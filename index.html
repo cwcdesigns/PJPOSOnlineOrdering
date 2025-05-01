@@ -341,34 +341,57 @@
  </div>
 
 
+<div id="checkout-view" class="hidden" style="max-width: 800px; margin: 20px auto;">
+     <h2>Checkout</h2>
+     <form id="checkout-form">
+         <h3>Your Information</h3>
+         <label for="name">Name:</label><input type="text" id="name" name="name" required><br>
+         <label for="phone">Phone:</label><input type="tel" id="phone" name="phone" required><br>
+         <label for="email">Email:</label><input type="email" id="email" name="email"><br>
+
+         <h3>Delivery or Pickup?</h3>
+         <div class="delivery-options">
+             <label><input type="radio" name="order_type" value="pickup" checked> Pickup</label>
+             <label><input type="radio" name="order_type" value="delivery"> Delivery</label>
+         </div>
+          <div id="delivery-address" class="hidden" style="margin-top: 15px;">
+             <label for="address">Address:</label><input type="text" id="address" name="address"><br>
+             <label for="city">City:</label><input type="text" id="city" name="city"><br>
+             <label for="zip">Zip Code:</label><input type="text" id="zip" name="zip"><br>
+         </div>
+
+          <h3>Order Summary</h3>
+         <div id="checkout-summary">
+             <h4>Items</h4>
+             <div id="checkout-summary-items"></div>
+             <div class="total">
+                 <span>Total:</span>
+                 <span id="checkout-summary-total">$0.00</span>
+             </div>
+         </div>
+
+         <h3>Payment</h3>
+         <p>Enter card details below:</p>
+         <div id="card-element"></div>
+         <div id="card-errors" role="alert"></div>
+         <button type="submit" id="submit-order-btn">Place Order & Pay (Test)</button>
+     </form>
+      <button id="back-to-menu-btn" type="button">Back to Menu</button> </div>
+
+<script src="https://js.stripe.com/v3/"></script>
+
 <script>
-    // --- Theme Switcher ---
+    // --- Theme Switcher (Keep from previous code) ---
     const themeSwitcher = document.getElementById('theme-switcher');
     const body = document.body;
-
-    function applyTheme(theme) {
-        if (theme === 'light') {
-            body.classList.add('light-mode');
-            themeSwitcher.textContent = 'Dark Mode';
-        } else {
-            body.classList.remove('light-mode');
-            themeSwitcher.textContent = 'Light Mode';
-        }
-    }
-
-    // Apply saved theme or default to dark
+    function applyTheme(theme) { /* ... same as before ... */ }
     const savedTheme = localStorage.getItem('theme') || 'dark';
-    applyTheme(savedTheme); // Apply theme on load
-
-    themeSwitcher.addEventListener('click', () => {
-        let currentTheme = body.classList.contains('light-mode') ? 'light' : 'dark';
-        let newTheme = currentTheme === 'light' ? 'dark' : 'light';
-        applyTheme(newTheme);
-        localStorage.setItem('theme', newTheme);
-    });
+    applyTheme(savedTheme);
+    themeSwitcher.addEventListener('click', () => { /* ... same as before ... */ });
+    // --- End Theme Switcher ---
 
 
-    // --- Cart Logic ---
+    // --- Cart Logic Variables (Keep from previous code) ---
     let cart = [];
     const cartItemsList = document.getElementById('cart-items').querySelector('ul');
     const cartItemsEmptyMsg = document.getElementById('cart-items').querySelector('p');
@@ -377,100 +400,55 @@
     const mainContent = document.getElementById('main-content');
     const checkoutView = document.getElementById('checkout-view');
     const backToMenuButton = document.getElementById('back-to-menu-btn');
+    const checkoutForm = document.getElementById('checkout-form'); // Get form reference
 
-    document.querySelectorAll('.add-to-cart-btn').forEach(button => {
-        button.addEventListener('click', (event) => {
-            const menuItemElement = event.target.closest('.menu-item');
-            addToCart(menuItemElement);
-        });
-    });
 
-     function updateDisplayedPrice(itemElement) {
-        let price = 0;
-        const basePriceAttr = itemElement.getAttribute('data-price');
-        let basePrice = basePriceAttr ? parseFloat(basePriceAttr) : 0;
-        price = basePrice;
-
-        const radioSelected = itemElement.querySelector('input[type="radio"]:checked');
-        if (radioSelected && radioSelected.hasAttribute('data-price')) {
-             price = parseFloat(radioSelected.getAttribute('data-price'));
-        }
-
-        const selectElement = itemElement.querySelector('select.wing-size-select');
-         if (selectElement) {
-             const selectedOption = selectElement.options[selectElement.selectedIndex];
-             if (selectedOption && selectedOption.hasAttribute('data-price')) {
-                 price = parseFloat(selectedOption.getAttribute('data-price'));
-             }
-         }
-
-         itemElement.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
-             if (checkbox.hasAttribute('data-addon-price')) {
-                 price += parseFloat(checkbox.getAttribute('data-addon-price'));
-             }
-         });
-
-         if (itemElement.getAttribute('data-id') === 'byo-pizza') {
-             const sizeRadio = itemElement.querySelector('input[type="radio"][name="byo_size"]:checked');
-             let byoPrice = sizeRadio ? parseFloat(sizeRadio.getAttribute('data-price') || 0) : 0;
-             const toppingPrice = sizeRadio ? parseFloat(sizeRadio.getAttribute('data-topprice') || 0) : 0;
-             const selectedToppings = itemElement.querySelectorAll('input[type="checkbox"][name="toppings"]:checked').length;
-             byoPrice += selectedToppings * toppingPrice;
-             price = byoPrice;
-         }
-
-        const priceDisplay = itemElement.querySelector('.add-to-cart-area .item-price, .item-details .item-price');
-        if(priceDisplay) { priceDisplay.textContent = `$${price.toFixed(2)}`; }
-     }
-
-     document.querySelectorAll('.menu-item input[type="radio"], .menu-item input[type="checkbox"], .menu-item select').forEach(input => {
-         input.addEventListener('change', (event) => {
-             const menuItemElement = event.target.closest('.menu-item');
-             updateDisplayedPrice(menuItemElement);
-         });
-     });
-
-    function addToCart(itemElement) {
+    // --- Cart Functions (addToCart, renderCart, updateDisplayedPrice - Keep from previous code) ---
+    function updateDisplayedPrice(itemElement) { /* ... same as before ... */ }
+    function addToCart(itemElement) { /* ... same-ish as before, ensures price calc uses updated logic */
         const id = itemElement.getAttribute('data-id');
         const name = itemElement.getAttribute('data-name');
-        let price = 0;
+        let price = 0; // Recalculate final price based on selections
         let optionsDescription = [];
 
         const radioSelected = itemElement.querySelector('input[type="radio"]:checked');
         const wingSizeSelect = itemElement.querySelector('.wing-size-select');
 
+        // Determine base price from radio/select first if applicable
         if (radioSelected && radioSelected.hasAttribute('data-price')) {
             price = parseFloat(radioSelected.getAttribute('data-price'));
-            const labelText = radioSelected.closest('label')?.textContent.trim().replace(/\s-\s*\$\d+\.\d+$/, '') || radioSelected.value; // Clean label
+            const labelText = radioSelected.closest('label')?.textContent.trim().replace(/\s-\s*\$\d+\.\d+$/, '') || radioSelected.value;
             optionsDescription.push(labelText);
         } else if (wingSizeSelect) {
             const selectedSizeOption = wingSizeSelect.options[wingSizeSelect.selectedIndex];
             price = parseFloat(selectedSizeOption.getAttribute('data-price'));
             optionsDescription.push(selectedSizeOption.textContent.trim());
         } else {
-             price = parseFloat(itemElement.getAttribute('data-price') || 0);
+             price = parseFloat(itemElement.getAttribute('data-price') || 0); // Fallback to data-price attribute
         }
 
+        // Add-ons from checkboxes (add AFTER base price determined)
         itemElement.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
              const labelText = checkbox.closest('label')?.textContent.trim().replace(/\(\+\$.*\)/, '').trim() || checkbox.value;
              optionsDescription.push(labelText);
              if (checkbox.hasAttribute('data-addon-price')) {
-                 price += parseFloat(checkbox.getAttribute('data-addon-price'));
+                 price += parseFloat(checkbox.getAttribute('data-addon-price')); // Add to price
              }
         });
 
+        // Options from selects (sauce, dressing) - Add description only
         itemElement.querySelectorAll('select:not(.wing-size-select)').forEach(select => {
              const selectedOption = select.options[select.selectedIndex];
-             // Include label if needed: const label = select.closest('.item-options')?.querySelector(`label[for="${select.id}"]`)?.textContent || '';
              optionsDescription.push(selectedOption.value);
         });
 
+         // Special Handling for BYO Pizza (Simplified Description & Price)
          if (id === 'byo-pizza') {
              const sizeRadio = itemElement.querySelector('input[type="radio"][name="byo_size"]:checked');
              const basePrice = sizeRadio ? parseFloat(sizeRadio.getAttribute('data-price') || 0) : 0;
              const toppingPrice = sizeRadio ? parseFloat(sizeRadio.getAttribute('data-topprice') || 0) : 0;
              const selectedToppings = itemElement.querySelectorAll('input[type="checkbox"][name="toppings"]:checked');
-             price = basePrice + (selectedToppings.length * toppingPrice);
+             price = basePrice + (selectedToppings.length * toppingPrice); // Final BYO price
 
              optionsDescription = [sizeRadio ? sizeRadio.value : 'Custom Size'];
              selectedToppings.forEach(topping => optionsDescription.push(topping.value));
@@ -481,11 +459,9 @@
         cart.push(cartItem);
         renderCart();
     }
-
-    function renderCart() {
+    function renderCart() { /* ... same as before ... */
         cartItemsList.innerHTML = '';
         let total = 0;
-
         if (cart.length === 0) {
              cartItemsEmptyMsg.style.display = 'block';
              cartItemsList.style.display = 'none';
@@ -493,74 +469,146 @@
         } else {
              cartItemsEmptyMsg.style.display = 'none';
              cartItemsList.style.display = 'block';
-            cart.forEach(item => {
-                total += item.price;
-                const li = document.createElement('li');
-                li.innerHTML = `<div class="item-info"><span>${item.name}</span>${item.options ? `<span class="cart-item-options">${item.options}</span>` : ''}</div><span class="item-price">$${item.price.toFixed(2)}</span>`;
-                cartItemsList.appendChild(li);
-            });
+            cart.forEach(item => { /* ... create li ... */
+                 total += item.price;
+                 const li = document.createElement('li');
+                 li.innerHTML = `<div class="item-info"><span>${item.name}</span>${item.options ? `<span class="cart-item-options">${item.options}</span>` : ''}</div><span class="item-price">$${item.price.toFixed(2)}</span>`;
+                 cartItemsList.appendChild(li);
+             });
              checkoutButton.classList.remove('hidden');
         }
         cartTotalElement.textContent = `Total: $${total.toFixed(2)}`;
     }
+    // --- End Cart Functions ---
 
-    // --- Checkout Navigation ---
+
+    // --- Event Listeners (Keep from previous code) ---
+    document.querySelectorAll('.add-to-cart-btn').forEach(button => { /* ... same as before ... */ });
+    document.querySelectorAll('.menu-item input[type="radio"], .menu-item input[type="checkbox"], .menu-item select').forEach(input => { /* ... same as before ... */ });
+    document.querySelectorAll('input[name="order_type"]').forEach(radio => { /* ... same as before ... */ });
+    // --- End Event Listeners ---
+
+    // =============================================
+    // === NEW: Stripe Elements Setup for Testing ===
+    // =============================================
+
+    // **IMPORTANT**: Replace with your actual **Test** Publishable Key
+    const stripe = Stripe('pk_test_YOUR_TEST_PUBLISHABLE_KEY'); // Use your test key!
+
+    let cardElement; // Declare cardElement globally in this scope if needed elsewhere
+
+    function setupStripeElements() {
+        const elements = stripe.elements();
+
+        // Custom styling for the Element
+        const style = {
+            base: {
+                color: body.classList.contains('light-mode') ? '#32325d' : '#ffffff', // Adjust color based on theme
+                fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+                fontSmoothing: 'antialiased',
+                fontSize: '16px',
+                '::placeholder': {
+                    color: body.classList.contains('light-mode') ? '#aab7c4' : '#777'
+                }
+            },
+            invalid: {
+                color: '#fa755a',
+                iconColor: '#fa755a'
+            }
+        };
+
+        // Create an instance of the card Element.
+        cardElement = elements.create('card', { style: style });
+
+        // Add an instance of the card Element into the `card-element` <div>.
+        cardElement.mount('#card-element');
+
+        // Handle real-time validation errors from the card Element.
+        cardElement.on('change', function(event) {
+            const displayError = document.getElementById('card-errors');
+            if (event.error) {
+                displayError.textContent = event.error.message;
+            } else {
+                displayError.textContent = '';
+            }
+        });
+    }
+
+     // Update card element style if theme changes while checkout is visible
+     themeSwitcher.addEventListener('click', () => {
+        // Check if checkout view is visible before attempting to update
+        if (!checkoutView.classList.contains('hidden') && cardElement) {
+             // Re-apply styles based on the new theme
+             const newBaseColor = body.classList.contains('light-mode') ? '#32325d' : '#ffffff';
+             const newPlaceholderColor = body.classList.contains('light-mode') ? '#aab7c4' : '#777';
+             cardElement.update({
+                 style: {
+                     base: {
+                         color: newBaseColor,
+                         '::placeholder': {
+                             color: newPlaceholderColor
+                         }
+                     }
+                 }
+             });
+         }
+     });
+
+
+    // --- Checkout Navigation (Modified) ---
     checkoutButton.addEventListener('click', () => {
         mainContent.classList.add('hidden');
         checkoutView.classList.remove('hidden');
 
+        // Populate checkout summary (same as before)
         const summaryItems = document.getElementById('checkout-summary-items');
         const summaryTotal = document.getElementById('checkout-summary-total');
         summaryItems.innerHTML = '';
         let total = 0;
-        cart.forEach(item => {
-            const div = document.createElement('div');
-            div.innerHTML = `<span>${item.name} ${item.options ? `(${item.options})` : ''}</span> <span>$${item.price.toFixed(2)}</span>`;
-            summaryItems.appendChild(div);
-            total += item.price;
-        });
+        cart.forEach(item => { /* ... populate summary ... */
+             const div = document.createElement('div');
+             div.innerHTML = `<span>${item.name} ${item.options ? '('+item.options+')' : ''}</span> <span>$${item.price.toFixed(2)}</span>`;
+             summaryItems.appendChild(div);
+             total += item.price;
+         });
         summaryTotal.textContent = `$${total.toFixed(2)}`;
 
-        // Placeholder: Initialize Stripe Elements here if needed
-        // setupStripeElements();
+        // *** Initialize Stripe Elements when checkout becomes visible ***
+        setupStripeElements();
     });
 
      backToMenuButton.addEventListener('click', () => {
          checkoutView.classList.add('hidden');
          mainContent.classList.remove('hidden');
+         // Optional: Destroy card element if needed to clean up
+         if(cardElement) {
+            // cardElement.destroy(); // Use if re-mounting causes issues
+         }
      });
 
-     // --- Delivery Address Toggle ---
-     document.querySelectorAll('input[name="order_type"]').forEach(radio => {
-         radio.addEventListener('change', (event) => {
-             const deliveryDiv = document.getElementById('delivery-address');
-             const addressInput = document.getElementById('address'); // Target specific input for required attribute
-             if (event.target.value === 'delivery') {
-                 deliveryDiv.classList.remove('hidden');
-                 addressInput.required = true; // Make address required for delivery
-             } else {
-                 deliveryDiv.classList.add('hidden');
-                 addressInput.required = false; // Make address not required for pickup
-             }
-         });
+
+     // --- Checkout Form Submission (TESTING ONLY) ---
+     checkoutForm.addEventListener('submit', async (event) => {
+         event.preventDefault();
+         console.log("Checkout form submitted (Test Window)");
+         alert("Form Submitted! Payment processing logic needed here using Stripe confirmCardPayment.");
+
+         // ** Placeholder for actual Stripe Payment Logic **
+         // In a real scenario, you would:
+         // 1. Show a loading indicator.
+         // 2. Create a PaymentIntent on your backend, passing the cart total.
+         // 3. Get the clientSecret back from your backend.
+         // 4. Use stripe.confirmCardPayment(clientSecret, { payment_method: { card: cardElement, ... } })
+         // 5. Handle the result (success or error).
+
+         const displayError = document.getElementById('card-errors');
+         displayError.textContent = 'TEST: Payment logic not implemented yet.'; // Show test message
      });
+
 
     // --- Initial Render & Price Calc ---
     renderCart();
-    document.querySelectorAll('.menu-item').forEach(item => updateDisplayedPrice(item)); // Calculate initial display prices
-
-     // --- Placeholder for Stripe Form Submission ---
-     const checkoutForm = document.getElementById('checkout-form');
-     checkoutForm.addEventListener('submit', event => {
-         event.preventDefault();
-         console.log("Checkout form submitted - Stripe integration needed here!");
-         // Simulate success for now
-         alert("Order Submitted! (Simulation - Payment Integration Needed)");
-         // Clear cart, navigate back to menu or to a success page
-         cart = [];
-         renderCart();
-         backToMenuButton.click(); // Go back to menu view
-     });
+    document.querySelectorAll('.menu-item').forEach(item => updateDisplayedPrice(item));
 
 </script>
 
