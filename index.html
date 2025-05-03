@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[Your Name] - Web Designer & App Developer</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Aero - Web Designer & App Developer</title>
+    <link rel="stylesheet" href="style-dark.css">
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
     <header class="site-header">
         <div class="container header-container">
-            <div class="logo">[Your Name] / Logo</div>
+            <div class="logo">AERO Web Design</div>
             <nav class="main-nav">
                 <ul>
                     <li><a href="#work">Work</a></li>
@@ -25,20 +25,21 @@
                     <li><a href="#contact">Contact</a></li>
                 </ul>
             </nav>
-            <button class="mobile-nav-toggle" aria-label="Toggle navigation">Menu</button>
-            </div>
+            <button class="mobile-nav-toggle" aria-label="Toggle navigation">
+                <span class="hamburger-icon"></span> </button>
+        </div>
     </header>
 
     <main>
         <section id="hero" class="hero-section">
             <div class="container hero-content">
-                <h1>Designing Intuitive Interfaces, Developing Robust Applications.</h1>
-                <p class="subtitle">Hi, I'm [Your Name], passionate about building user-centered products that are both beautiful and functional.</p>
+                <h1>Crafting Digital Experiences.<br>Web & Mobile.</h1>
+                <p class="subtitle">Hi, I'm Aero. I design and develop intuitive, high-performance websites and applications.</p>
                 <div class="cta-buttons">
                     <a href="#work" class="btn btn-primary">View My Work</a>
                     <a href="#contact" class="btn btn-secondary">Get In Touch</a>
                 </div>
-                </div>
+            </div>
         </section>
 
         <section id="work" class="featured-work-section section-padding">
@@ -48,68 +49,50 @@
                     <article class="project-card">
                         <img src="images/project1-thumbnail.jpg" alt="[Project 1 Title] Thumbnail">
                         <div class="card-content">
-                            <h3>[Project 1 Title]</h3>
+                            <h3>Web</h3>
                             <span class="tag">Web Design</span> <span class="tag">React</span>
-                            <a href="project-detail-1.html" class="card-link">View Case Study</a>
+                            <a href="project-detail-1.html" class="card-link">View Case Study &rarr;</a>
                         </div>
                     </article>
-                    <article class="project-card">
-                        <img src="images/project2-thumbnail.jpg" alt="[Project 2 Title] Thumbnail">
-                        <div class="card-content">
-                            <h3>[Project 2 Title]</h3>
-                             <span class="tag">iOS App</span> <span class="tag">SwiftUI</span>
-                            <a href="project-detail-2.html" class="card-link">View Case Study</a>
-                        </div>
-                    </article>
-                    <article class="project-card">
-                        <img src="images/project3-thumbnail.jpg" alt="[Project 3 Title] Thumbnail">
-                         <div class="card-content">
-                           <h3>[Project 3 Title]</h3>
-                            <span class="tag">Android App</span> <span class="tag">Kotlin</span>
-                           <a href="project-detail-3.html" class="card-link">View Case Study</a>
-                         </div>
-                    </article>
-                </div>
+                     </div>
                 <div class="text-center" style="margin-top: 2rem;">
                     <a href="portfolio.html" class="btn btn-secondary">See All Projects</a>
                 </div>
             </div>
         </section>
 
-        <section id="services" class="services-section section-padding bg-light">
+         <section id="services" class="services-section section-padding bg-offset">
              <div class="container">
                 <h2>My Expertise</h2>
                 <div class="expertise-grid">
                     <div class="expertise-category">
-                        <i class="icon-design">[Icon]</i> <h3>Design</h3>
+                        <div class="icon-wrapper"><i class="icon-design">[Design Icon]</i></div>
+                        <h3>Design</h3>
+                        <p>Crafting user-centric and visually appealing interfaces from concept to final polish.</p>
                         <ul>
                             <li>UI/UX Design</li>
                             <li>Prototyping & Wireframing</li>
-                            <li>Interaction Design</li>
-                            <li>Mobile App Design</li>
-                            <li>Web Design</li>
+                            <li>Mobile & Web Design</li>
                         </ul>
                     </div>
                     <div class="expertise-category">
-                         <i class="icon-web">[Icon]</i>
+                        <div class="icon-wrapper"><i class="icon-web">[Web Dev Icon]</i></div>
                         <h3>Web Development</h3>
-                        <ul>
-                            <li>HTML5, CSS3, JavaScript (ES6+)</li>
-                            <li>React, Vue.js [or your preference]</li>
-                            <li>Responsive Design</li>
+                        <p>Building responsive, high-performance websites using modern technologies.</p>
+                         <ul>
+                            <li>Frontend (React, Vue, etc.)</li>
+                            <li>HTML5, CSS3, JS (ES6+)</li>
                             <li>Performance Optimization</li>
-                            <li>[Backend Tech if applicable]</li>
                         </ul>
                     </div>
                     <div class="expertise-category">
-                         <i class="icon-app">[Icon]</i>
+                         <div class="icon-wrapper"><i class="icon-app">[App Dev Icon]</i></div>
                         <h3>App Development</h3>
+                        <p>Developing native and cross-platform mobile applications for iOS and Android.</p>
                         <ul>
-                            <li>iOS (Swift / SwiftUI)</li>
-                            <li>Android (Kotlin / Jetpack Compose)</li>
-                            <li>React Native / Flutter [if applicable]</li>
-                            <li>API Integration</li>
-                            <li>App Store Submission</li>
+                            <li>iOS (Swift/SwiftUI)</li>
+                            <li>Android (Kotlin/Compose)</li>
+                            <li>React Native / Flutter</li>
                         </ul>
                     </div>
                 </div>
@@ -117,39 +100,33 @@
         </section>
 
         <section id="about" class="about-section section-padding">
-            <div class="container about-container">
-                <div class="about-image">
-                    <img src="images/your-photo.jpg" alt="[Your Name], Web Designer and App Developer">
-                </div>
+             <div class="container about-container">
+                </div> -->
                 <div class="about-text">
                     <h2>About Me</h2>
-                    <p>[Write your story here. Your journey, passion, philosophy. Example: I fell in love with coding when... and discovered design shortly after... My goal is always to...]</p>
-                    <p>[More details about your approach, what drives you, maybe a key value like 'user-first' or 'pixel-perfect'.]</p>
-                    </div>
+                    <p>[Your concise and engaging bio here...]</p>
+                    <p>[Highlight your passion and unique approach.]</p>
+                </div>
+                 <div class="about-image">
+                     <img src="images/your-photo.jpg" alt="[Your Name], Web Designer and App Developer">
+                 </div>
             </div>
         </section>
 
-        <section id="contact" class="contact-section section-padding bg-light">
+        <section id="contact" class="contact-section section-padding bg-offset">
             <div class="container text-center">
-                <h2>Let's Build Something Together</h2>
-                <p>Interested in collaborating or have a question? Reach out!</p>
+                <h2>Let's Connect</h2>
+                <p>Have a project in mind or just want to say hi? Send me a message!</p>
                 <form id="contact-form" class="contact-form">
-                    <div class="form-group">
-                        <input type="text" id="name" name="name" placeholder="Your Name" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="email" id="email" name="email" placeholder="Your Email" required>
-                    </div>
-                    <div class="form-group">
-                        <textarea id="message" name="message" rows="5" placeholder="Your Message" required></textarea>
-                    </div>
+                     <div class="form-group"> <input type="text" id="name" name="name" placeholder="Your Name" required> </div>
+                     <div class="form-group"> <input type="email" id="email" name="email" placeholder="Your Email" required> </div>
+                     <div class="form-group"> <textarea id="message" name="message" rows="5" placeholder="Your Message" required></textarea> </div>
                     <button type="submit" class="btn btn-primary">Send Message</button>
                 </form>
                 <div class="social-links">
-                    <a href="[Your LinkedIn URL]" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="icon-linkedin">[LinkedIn Icon]</i></a>
-                    <a href="[Your GitHub URL]" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="icon-github">[GitHub Icon]</i></a>
-                    <a href="[Your Dribbble/Behance URL (optional)]" target="_blank" rel="noopener noreferrer" aria-label="Dribbble"><i class="icon-dribbble">[Dribbble Icon]</i></a>
-                    <a href="mailto:[Your Email Address]" aria-label="Email"><i class="icon-email">[Email Icon]</i></a>
+                    <a href="[Your LinkedIn URL]" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="icon-linkedin">[LI Icon]</i></a>
+                    <a href="[Your GitHub URL]" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="icon-github">[GH Icon]</i></a>
+                    <a href="mailto:[Your Email Address]" aria-label="Email"><i class="icon-email">[Mail Icon]</i></a>
                 </div>
             </div>
         </section>
@@ -157,8 +134,8 @@
 
     <footer class="site-footer-bottom">
         <div class="container">
-            <p>&copy; <span id="current-year"></span> [Your Name]. All rights reserved.</p>
-            <a href="#top" class="back-to-top">Top &uarr;</a>
+            <p>&copy; <span id="current-year"></span> [Your Name]. Crafted with <span class="heart">&hearts;</span></p>
+             <a href="#top" class="back-to-top" aria-label="Back to top">&uarr;</a>
         </div>
     </footer>
 
