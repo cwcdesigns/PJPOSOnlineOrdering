@@ -1,0 +1,222 @@
+/* ----- Variables & Base Styles (Dark Theme Focus) ----- */
+:root {
+    /* Color Palette (Example - Adjust to your preference) */
+    --background-dark: #121212; /* Very dark grey */
+    --background-offset: #1e1e1e; /* Slightly lighter dark for cards/sections */
+    --text-light: #e0e0e0;      /* Light grey text */
+    --text-muted: #888888;       /* Muted grey for subtitles, etc. */
+    --accent-color: #00aaff;     /* Example: Bright Blue accent */
+    --accent-hover: #0088cc;    /* Darker shade for hover */
+    --border-color: #333333;     /* Subtle border color */
+
+    /* Typography */
+    --font-primary: 'Inter', sans-serif;
+    --font-headings: 'Inter', sans-serif; /* Using same font, maybe bolder weight */
+
+    /* Layout */
+    --container-width: 1140px;
+    --spacing-unit: 1rem;
+    --border-radius: 6px; /* Consistent border radius */
+}
+
+/* Basic Reset */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+    font-family: var(--font-primary);
+    line-height: 1.7; /* Slightly more line height for readability */
+    color: var(--text-light);
+    background-color: var(--background-dark);
+    -webkit-font-smoothing: antialiased; /* Smoother fonts */
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ----- Utility Classes ----- */
+.container { max-width: var(--container-width); margin: 0 auto; padding: 0 calc(var(--spacing-unit) * 1.5); }
+.section-padding { padding: calc(var(--spacing-unit) * 5) 0; } /* Increased padding */
+.bg-offset { background-color: var(--background-offset); }
+.text-center { text-align: center; }
+
+/* ----- Typography ----- */
+h1, h2, h3, h4 {
+    font-family: var(--font-headings);
+    font-weight: 700;
+    margin-bottom: calc(var(--spacing-unit) * 1.5);
+    line-height: 1.3;
+    color: #ffffff; /* Ensure headings are bright */
+}
+h1 { font-size: 3rem; letter-spacing: -1px;} /* Larger H1 */
+h2 { font-size: 2.25rem; margin-bottom: calc(var(--spacing-unit) * 2); } /* More space below H2 */
+h3 { font-size: 1.5rem; }
+p { margin-bottom: var(--spacing-unit); }
+a { color: var(--accent-color); text-decoration: none; transition: color 0.2s ease; }
+a:hover { color: var(--accent-hover); }
+.subtitle { color: var(--text-muted); font-size: 1.15rem; max-width: 650px; margin: 0 auto calc(var(--spacing-unit) * 2);}
+
+/* ----- Buttons (Dark Theme Adjusted) ----- */
+.btn {
+    display: inline-block;
+    padding: calc(var(--spacing-unit)*0.8) calc(var(--spacing-unit)*1.8);
+    border: 2px solid transparent;
+    border-radius: var(--border-radius);
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: calc(var(--spacing-unit)*0.25);
+    text-transform: uppercase; /* Optional: Uppercase buttons */
+    letter-spacing: 0.5px;
+}
+.btn-primary { /* Uses accent color */
+    background-color: var(--accent-color);
+    color: var(--background-dark); /* Text color contrasts with accent */
+    border-color: var(--accent-color);
+}
+.btn-primary:hover {
+    background-color: var(--accent-hover);
+    border-color: var(--accent-hover);
+    transform: translateY(-2px); /* Subtle lift */
+}
+.btn-secondary { /* Outline style */
+    background-color: transparent;
+    color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+.btn-secondary:hover {
+    background-color: var(--accent-color);
+    color: var(--background-dark);
+    transform: translateY(-2px);
+}
+
+/* ----- Header (Dark Theme) ----- */
+.site-header {
+    padding: calc(var(--spacing-unit) * 1.5) 0;
+    background-color: rgba(18, 18, 18, 0.8); /* Semi-transparent dark */
+    border-bottom: 1px solid var(--border-color);
+    position: sticky; top: 0; z-index: 100;
+    backdrop-filter: blur(10px); /* Glassmorphism effect */
+    -webkit-backdrop-filter: blur(10px);
+}
+.header-container { display: flex; justify-content: space-between; align-items: center; }
+.logo { font-weight: bold; font-size: 1.5rem; color: #fff; }
+.main-nav ul { list-style: none; display: flex; gap: calc(var(--spacing-unit)*1.5); }
+.main-nav a { font-weight: 600; color: var(--text-light); position: relative; padding-bottom: 5px; }
+.main-nav a::after { /* Underline animation on hover */
+    content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 2px;
+    background-color: var(--accent-color); transition: width 0.3s ease;
+}
+.main-nav a:hover::after,
+.main-nav a.active::after { width: 100%; }
+.mobile-nav-toggle { display: none; /* Style hamburger icon */ }
+
+
+/* ----- Hero Section (Dark Theme) ----- */
+.hero-section {
+    min-height: 70vh; display: flex; align-items: center; text-align: center;
+    padding: calc(var(--spacing-unit) * 6) 0;
+    /* Optional: Subtle gradient background */
+    /* background: linear-gradient(180deg, var(--background-dark) 70%, var(--background-offset) 100%); */
+}
+
+/* ----- Project Cards (Dark Theme) ----- */
+.project-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: calc(var(--spacing-unit) * 2.5); }
+.project-card {
+    background-color: var(--background-offset);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    border: 1px solid var(--border-color); /* Subtle border */
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.project-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    border-color: var(--accent-color); /* Highlight border on hover */
+}
+.project-card img { display: block; width: 100%; height: 220px; object-fit: cover; border-bottom: 1px solid var(--border-color); }
+.project-card .card-content { padding: calc(var(--spacing-unit) * 1.5); }
+.project-card h3 { margin-bottom: calc(var(--spacing-unit)*0.75); font-size: 1.3rem; color: #fff; }
+.project-card .tag { /* Style tags */
+    display: inline-block; background-color: rgba(var(--accent-color-rgb, 0, 170, 255), 0.15); /* Use RGBA for transparency */
+    color: var(--accent-color); padding: 0.3em 0.8em; border-radius: 4px; font-size: 0.8rem;
+    margin-right: 0.5em; margin-bottom: 0.5em; font-weight: 500;
+}
+.project-card .card-link { display: block; margin-top: var(--spacing-unit); font-weight: bold; color: var(--accent-color); }
+.project-card .card-link:hover { text-decoration: underline; }
+
+
+/* ----- Services / Expertise (Dark Theme - Inspired Layout) ----- */
+.expertise-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: calc(var(--spacing-unit) * 2.5); }
+.expertise-category {
+    text-align: center; padding: calc(var(--spacing-unit)*2);
+    background-color: var(--background-dark); /* Slightly darker than offset bg */
+    border-radius: var(--border-radius); border: 1px solid var(--border-color);
+}
+.expertise-category .icon-wrapper {
+    width: 60px; height: 60px; margin: 0 auto calc(var(--spacing-unit)*1.5);
+    background-color: rgba(var(--accent-color-rgb, 0, 170, 255), 0.1); /* Accent bg for icon */
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+}
+.expertise-category i { /* Your Icon Styling */
+    font-size: 2rem; color: var(--accent-color);
+}
+.expertise-category h3 { margin-bottom: var(--spacing-unit); font-size: 1.4rem; }
+.expertise-category p { color: var(--text-muted); margin-bottom: var(--spacing-unit); }
+.expertise-category ul { list-style: none; padding: 0; color: var(--text-light); }
+.expertise-category li { margin-bottom: calc(var(--spacing-unit) * 0.5); position: relative; padding-left: 1.2em; }
+.expertise-category li::before { /* Custom bullet points */
+    content: '•'; color: var(--accent-color); position: absolute; left: 0; font-size: 1.2em; line-height: inherit;
+}
+
+/* ----- About Section (Dark Theme) ----- */
+.about-container { display: grid; grid-template-columns: 1fr 1fr; gap: calc(var(--spacing-unit) * 4); align-items: center; }
+.about-image img { max-width: 100%; height: auto; border-radius: var(--border-radius); border: 1px solid var(--border-color); }
+/* Adjust grid for smaller screens if needed */
+@media (max-width: 768px) { .about-container { grid-template-columns: 1fr; } }
+
+/* ----- Contact Form (Dark Theme) ----- */
+.contact-form { max-width: 600px; margin: calc(var(--spacing-unit) * 2) auto; text-align: left; }
+.form-group { margin-bottom: calc(var(--spacing-unit) * 1.5); }
+.form-group input, .form-group textarea {
+    width: 100%; padding: calc(var(--spacing-unit) * 1); border: 1px solid var(--border-color);
+    border-radius: var(--border-radius); font-family: inherit; font-size: 1rem;
+    background-color: var(--background-offset); color: var(--text-light);
+}
+.form-group input::placeholder, .form-group textarea::placeholder { color: var(--text-muted); }
+.form-group input:focus, .form-group textarea:focus {
+    outline: none; border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(var(--accent-color-rgb, 0, 170, 255), 0.3); /* Focus ring */
+}
+.contact-form button { width: 100%; margin-top: var(--spacing-unit); }
+
+.social-links { margin-top: calc(var(--spacing-unit) * 3); }
+.social-links a { font-size: 1.8rem; margin: 0 var(--spacing-unit); color: var(--text-muted); }
+.social-links a:hover { color: var(--accent-color); }
+
+
+/* ----- Footer (Dark Theme) ----- */
+.site-footer-bottom {
+    text-align: center; padding: calc(var(--spacing-unit) * 2) 0;
+    margin-top: calc(var(--spacing-unit) * 4); border-top: 1px solid var(--border-color);
+    font-size: 0.9rem; color: var(--text-muted);
+}
+.site-footer-bottom .heart { color: var(--accent-color); } /* Style heart */
+.back-to-top { color: var(--text-muted); margin-left: var(--spacing-unit); }
+.back-to-top:hover { color: var(--accent-color); }
+
+/* ----- Responsive Design (Add specific dark theme overrides if needed) ----- */
+@media (max-width: 768px) {
+    h1 { font-size: 2.5rem; } h2 { font-size: 2rem; }
+    .mobile-nav-toggle { display: block; /* ... Style hamburger icon ... */ }
+    .main-nav { display: none; /* ... Mobile menu styles ... */ }
+    .main-nav.active { /* Styles for active mobile menu in dark theme */
+        background-color: var(--background-offset);
+        /* ... other styles ... */
+    }
+    .about-container { grid-template-columns: 1fr; gap: calc(var(--spacing-unit) * 2); }
+    .about-image { order: -1; /* Put image first on mobile */ margin-bottom: var(--spacing-unit); }
+}
+
+/* Add RGBA version of accent color for transparent backgrounds */
+/* If --accent-color is #00aaff */
+:root { --accent-color-rgb: 0, 170, 255; }
