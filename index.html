@@ -3,664 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jane's Pizza - Online Ordering</title>
-    <style>
-        /* ====================
-           THEME VARIABLES
-           ==================== */
-        :root {
-            /* Dark Mode Defaults */
-            --bg-color: #1f1f1f;
-            --text-color: #e4e4e4;
-            --card-bg: #2d2d2d;
-            --border-color: #4a4a4a;
-            --primary-color: #e74c3c;
-            --secondary-color: #e09389;
-            --button-text: #ffffff;
-            --shadow-color: rgba(255, 255, 255, 0.05);
-            --input-bg: #333;
-            --input-border: #555;
-            --input-text: #e4e4e4;
-            --h-border: var(--primary-color);
-            --placeholder-color: #777;
-            --error-color: #fa755a; /* Stripe's red for errors */
-        }
-
-        body.light-mode {
-            /* Light Mode Overrides */
-            --bg-color: #f4f4f4;
-            --text-color: #333333;
-            --card-bg: #ffffff;
-            --border-color: #dddddd;
-            --shadow-color: rgba(0, 0, 0, 0.08);
-            --input-bg: #fff;
-            --input-border: #ccc;
-            --input-text: #333;
-            --placeholder-color: #aab7c4;
-        }
-
-        /* ====================
-           BASE & LAYOUT
-           ==================== */
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
-            transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
-        }
-        .hidden { display: none !important; }
-        .container { max-width: 1400px; margin: 0 auto; padding: 0 15px; }
-
-        /* Header */
-        .site-header {
-            padding: 10px 0;
-            background-color: var(--card-bg);
-            border-bottom: 1px solid var(--border-color);
-            position: sticky; top: 0; z-index: 100;
-        }
-        .header-content {
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .site-header h1 { color: var(--primary-color); margin: 0; font-size: 1.8em; border: none; }
-        #theme-switcher { padding: 8px 15px; cursor: pointer; background-color: var(--primary-color); color: var(--button-text); border: none; border-radius: 20px; font-weight: bold; }
-        #theme-switcher:hover { opacity: 0.85; }
-
-        /* Main Content Area */
-        .main-layout { display: flex; gap: 25px; padding-top: 20px; }
-        .menu-column { flex: 3; min-width: 0; /* Prevents overflow issues */}
-        .cart-column { flex: 1; min-width: 280px; /* Ensure cart has minimum width */ }
-        .sticky-cart { position: sticky; top: 80px; /* Below sticky header */ height: fit-content; }
-        .cart-box, .menu-box, .checkout-box {
-            background-color: var(--card-bg);
-            padding: 20px; border-radius: 8px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 3px 8px var(--shadow-color);
-            margin-bottom: 20px; /* For non-sticky elements */
-        }
-
-        /* ====================
-           MENU STYLES
-           ==================== */
-        .menu-box h2, .cart-box h2, .checkout-box h2 {
-            margin-top: 0; border-bottom: 2px solid var(--h-border); padding-bottom: 8px; margin-bottom: 20px;
-        }
-        .menu-category { margin-bottom: 30px; }
-        .menu-item {
-            display: flex; gap: 15px; align-items: flex-start;
-            padding: 15px; margin-bottom: 15px; border-radius: 6px;
-            background-color: var(--bg-color); border: 1px solid var(--border-color);
-        }
-        .item-image-placeholder { width: 75px; height: 75px; background-color: var(--input-bg); border: 1px solid var(--border-color); border-radius: 4px; flex-shrink: 0; }
-        .item-details { flex-grow: 1; }
-        .item-name { font-weight: 600; font-size: 1.1em; color: var(--secondary-color); margin-bottom: 4px; }
-        .item-description { font-size: 0.9em; opacity: 0.85; margin-bottom: 10px; }
-        .item-price { font-weight: bold; color: var(--primary-color); display: block; margin-bottom: 10px; }
-        .item-options { font-size: 0.9em; margin-bottom: 10px; }
-        .item-options label { display: block; margin-bottom: 8px; }
-        .item-options select, .item-options input[type="text"], .item-options input[type="tel"], .item-options input[type="email"] {
-            width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--input-border);
-            background-color: var(--input-bg); color: var(--input-text); box-sizing: border-box;
-        }
-        .item-options input[type="radio"], .item-options input[type="checkbox"] { margin-right: 6px; accent-color: var(--primary-color); }
-        .add-to-cart-area { margin-left: auto; text-align: right; }
-        .add-to-cart-btn { background-color: var(--primary-color); color: var(--button-text); border: none; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 0.9em; font-weight: bold; margin-top: 5px; }
-        .add-to-cart-btn:hover { opacity: 0.85; }
-
-        /* ====================
-           CART STYLES
-           ==================== */
-        #cart-items ul { list-style: none; padding: 0; margin: 0; }
-        #cart-items li { border-bottom: 1px dashed var(--border-color); padding: 10px 0; margin-bottom: 10px; font-size: 0.9em; display: flex; justify-content: space-between; align-items: center; }
-        #cart-items li .item-info { flex-grow: 1; margin-right: 10px; }
-        #cart-items li .item-info span { display: block; }
-        #cart-items li .item-info .cart-item-options { font-size: 0.85em; opacity: 0.8; }
-        #cart-items li .item-price { font-weight: bold; white-space: nowrap; }
-        #cart-total { margin-top: 20px; border-top: 2px solid var(--secondary-color); padding-top: 10px; font-weight: bold; font-size: 1.2em; text-align: right; }
-        #checkout-btn { background-color: #2ecc71; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-top: 20px; width: 100%; font-size: 1.1em; text-align: center; }
-        #checkout-btn:hover { background-color: #27ae60; }
-
-        /* ====================
-           CHECKOUT STYLES
-           ==================== */
-        .checkout-box h3 { border-bottom: 1px solid var(--secondary-color); padding-bottom: 5px; margin: 25px 0 15px 0; }
-        .checkout-box label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.95em; }
-        .checkout-box input[type="text"], .checkout-box input[type="tel"], .checkout-box input[type="email"] { /* Use existing styles */ margin-bottom: 15px; }
-        .checkout-box .delivery-options label { display: inline-block; margin-right: 20px; font-weight: normal; }
-        #card-element { border: 1px solid var(--input-border); padding: 12px; margin: 10px 0; border-radius: 4px; background-color: var(--bg-color); /* Match item bg */}
-        #card-errors { color: var(--error-color); margin-top: 8px; font-size: 0.9em; }
-        #checkout-summary { border: 1px solid var(--border-color); padding: 15px; margin-top: 15px; border-radius: 4px; }
-        #checkout-summary h4 { margin-top: 0; border-bottom: 1px solid var(--border-color); padding-bottom: 5px; font-size: 1.1em; }
-        #checkout-summary div { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.9em; }
-        #checkout-summary .total { font-weight: bold; font-size: 1.1em; border-top: 1px solid var(--border-color); padding-top: 10px; margin-top: 10px; }
-        #submit-order-btn { background-color: var(--primary-color); color: var(--button-text); padding: 12px 25px; border: none; border-radius: 5px; cursor: pointer; margin-top: 20px; font-size: 1.1em; width: 100%; text-align: center; }
-        #submit-order-btn:hover { opacity: 0.85; }
-        #back-to-menu-btn { margin-top: 15px; background: #6c757d; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; width: 100%; text-align: center; }
-
-        /* Responsive */
-        @media (max-width: 992px) {
-            .main-layout { flex-direction: column; }
-            .cart-column { order: -1; /* Move cart to top on smaller screens */ }
-            .sticky-cart { position: static; }
-        }
-        @media (max-width: 600px) {
-             .menu-item { flex-direction: column; align-items: stretch; }
-             .item-image-placeholder { width: 100%; height: 150px; }
-             .add-to-cart-area { align-items: flex-start; margin-left: 0; margin-top: 10px; text-align: left; }
-             .site-header { position: static; } /* Unstick header */
-             .main-layout { padding-top: 10px; }
-             .sticky-cart { top: auto; }
-             #theme-switcher { font-size: 0.9em; padding: 6px 12px;}
-             .site-header h1 { font-size: 1.5em;}
-        }
-
-    </style>
+    <title>[Your Name] - Web Designer & App Developer</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 </head>
 <body>
 
     <header class="site-header">
-        <div class="container header-content">
-            <h1>Jane's Pizza</h1>
-            <button id="theme-switcher">Light Mode</button>
-        </div>
+        <div class="container header-container">
+            <div class="logo">[Your Name] / Logo</div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="#work">Work</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <button class="mobile-nav-toggle" aria-label="Toggle navigation">Menu</button>
+            </div>
     </header>
 
-    <div class="container">
-        <div class="main-layout" id="menu-cart-view">
-            <div class="menu-column">
-                <div class="menu-box">
-                    <section id="appetizers" class="menu-category">
-                         <h2>Appetizers</h2>
-                         <div class="menu-item" data-id="fries-basket" data-name="Basket Of Fries" data-price="4.99"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Basket Of Fries</span> <p class="item-description">Crinkle Cut Fries topped with salt.</p> </div> <div class="add-to-cart-area"> <span class="item-price">$4.99</span><button class="add-to-cart-btn">Add</button> </div> </div>
-                         <div class="menu-item" data-id="tenders" data-name="Chicken Tenders" data-price="9.99"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Chicken Tenders</span> <p class="item-description">Five fried chicken tenders.</p> <div class="item-options"> <label><input type="checkbox" name="add_fries_tenders" data-addon-price="1.99"> Add side of fries (+$1.99)</label> </div> </div> <div class="add-to-cart-area"> <span class="item-price">$9.99</span><button class="add-to-cart-btn">Add</button> </div> </div>
-                         <div class="menu-item" data-id="fries-side" data-name="Side Of Fries" data-price="1.99"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Side Of Fries</span> </div> <div class="add-to-cart-area"> <span class="item-price">$1.99</span><button class="add-to-cart-btn">Add</button> </div> </div>
-                         <div class="menu-item" data-id="garlic-bread" data-name="Garlic Bread" data-price="3.99"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Garlic Bread</span> <p class="item-description">Bread brushed with garlic butter, and topped with oregano.</p> </div> <div class="add-to-cart-area"> <span class="item-price">$3.99</span><button class="add-to-cart-btn">Add</button> </div> </div>
-                         <div class="menu-item" data-id="cheese-sticks" data-name="Cheese Bread Sticks" data-price="8.99"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Cheese Bread Sticks</span> <p class="item-description">Brushed with garlic butter, then topped with Mozzarella, Cheddar, and Parmesan.</p> </div> <div class="add-to-cart-area"> <span class="item-price">$8.99</span><button class="add-to-cart-btn">Add</button> </div> </div>
-                    </section>
+    <main>
+        <section id="hero" class="hero-section">
+            <div class="container hero-content">
+                <h1>Designing Intuitive Interfaces, Developing Robust Applications.</h1>
+                <p class="subtitle">Hi, I'm [Your Name], passionate about building user-centered products that are both beautiful and functional.</p>
+                <div class="cta-buttons">
+                    <a href="#work" class="btn btn-primary">View My Work</a>
+                    <a href="#contact" class="btn btn-secondary">Get In Touch</a>
+                </div>
+                </div>
+        </section>
 
-                     <section id="gourmet-pizzas" class="menu-category">
-                         <h2>Jane's Gourmet Pizzas</h2>
-                         <p>All gourmet pies are 14" (Large - $17.99) or request an 18" (Extra Large - $25.99)!</p>
-                         <div class="menu-item" data-id="white-pizza" data-name="White Pizza"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">White Pizza</span> <p class="item-description">Olive Oil, Provolone, Mozzarella, Parmesan Cheese, Beef, Oregano, Basil, Onions, Green Peppers, Tomatos.</p> <div class="item-options"> <label><input type="radio" name="gp_size_1" value="Large (14&quot;)" data-price="17.99" checked> Large (14")</label> <label><input type="radio" name="gp_size_1" value="XL (18&quot;)" data-price="25.99"> Extra Large (18")</label> </div> </div> <div class="add-to-cart-area"> <span class="item-price">$17.99</span> <button class="add-to-cart-btn">Add</button> </div> </div>
-                          <div class="menu-item" data-id="greek-pizza" data-name="Greek Pizza"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Greek Pizza</span> <p class="item-description">Olive Oil, Fresh Garlic, Oregano, Feta Cheese, Onion, Black Olives, and Tomatoes.</p> <div class="item-options"> <label><input type="radio" name="gp_size_2" value="Large (14&quot;)" data-price="17.99" checked> Large (14")</label> <label><input type="radio" name="gp_size_2" value="XL (18&quot;)" data-price="25.99"> Extra Large (18")</label> </div> </div> <div class="add-to-cart-area"> <span class="item-price">$17.99</span> <button class="add-to-cart-btn">Add</button> </div> </div>
-                          <div class="menu-item" data-id="janes-favorite-pizza" data-name="Jane's Favorite Pizza"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Jane's Favorite</span> <p class="item-description">Canadian Bacon, Beef, Onions, Mushrooms, Green Peppers, and Black Olives.</p> <div class="item-options"> <label><input type="radio" name="gp_size_14" value="Large (14&quot;)" data-price="17.99" checked> Large (14")</label> <label><input type="radio" name="gp_size_14" value="XL (18&quot;)" data-price="25.99"> Extra Large (18")</label> </div> </div> <div class="add-to-cart-area"> <span class="item-price">$17.99</span> <button class="add-to-cart-btn">Add</button> </div> </div>
-
-                     </section>
-
-                     <section id="calzone-stromboli" class="menu-category">
-                          <h2>Calzone & Stromboli</h2>
-                          <div class="menu-item" data-id="janes-calzone" data-name="Jane's Calzone"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Jane's Calzone</span> <p class="item-description">Pepperoni, Sausage, Mushrooms, Mozzarella, Ricotta Cheese, topped with Parmesan.</p> <div class="item-options"> <label><input type="radio" name="cs_size_1" value="Small" data-price="13.99" checked> Small</label> <label><input type="radio" name="cs_size_1" value="Medium" data-price="15.99"> Medium</label> <label><input type="radio" name="cs_size_1" value="Large" data-price="17.99"> Large</label> </div> </div> <div class="add-to-cart-area"> <span class="item-price">$13.99</span> <button class="add-to-cart-btn">Add</button> </div> </div>
-                           <div class="menu-item" data-id="cheese-calzone" data-name="Cheese Calzone"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Cheese Calzone</span> <p class="item-description">Mozzarella, Ricotta, and topped with Parmesan. you can also customize this.</p> <div class="item-options"> <label><input type="radio" name="cs_size_2" value="Small" data-price="13.99" checked> Small</label> <label><input type="radio" name="cs_size_2" value="Medium" data-price="15.99"> Medium</label> <label><input type="radio" name="cs_size_2" value="Large" data-price="17.99"> Large</label> </div> </div> <div class="add-to-cart-area"> <span class="item-price">$13.99</span> <button class="add-to-cart-btn">Add</button> </div> </div>
-                           <div class="menu-item" data-id="spinach-calzone" data-name="Spinach Calzone"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Spinach Calzone</span> <p class="item-description">Mozzarella, Spinach, Ricotta and topped with Parmesan.</p> <div class="item-options"> <label><input type="radio" name="cs_size_3" value="Small" data-price="13.99" checked> Small</label> <label><input type="radio" name="cs_size_3" value="Medium" data-price="15.99"> Medium</label> <label><input type="radio" name="cs_size_3" value="Large" data-price="17.99"> Large</label> </div> </div> <div class="add-to-cart-area"> <span class="item-price">$13.99</span> <button class="add-to-cart-btn">Add</button> </div> </div>
-                           <div class="menu-item" data-id="janes-stromboli" data-name="Jane's Stromboli"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Jane's Stromboli</span> <p class="item-description">Pepperoni, Sausage, Onions, Mushrooms, Green Peppers, Mozzarella, and topped with Parmesan.</p> <div class="item-options"> <label><input type="radio" name="cs_size_4" value="Small" data-price="13.99" checked> Small</label> <label><input type="radio" name="cs_size_4" value="Medium" data-price="15.99"> Medium</label> <label><input type="radio" name="cs_size_4" value="Large" data-price="17.99"> Large</label> </div> </div> <div class="add-to-cart-area"> <span class="item-price">$13.99</span> <button class="add-to-cart-btn">Add</button> </div> </div>
-                     </section>
-
-                    <section id="wings" class="menu-category">
-                        <h2>Wings</h2>
-                        <p>Sauces: Hartsville Hot, Garlic Parmesan, Buffalo, Sweet BBQ, and Jamaican Jerk.</p>
-                        <div class="menu-item" data-id="wings" data-name="Wings"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Wings</span> <div class="item-options"> <label for="wing-size">Size:</label> <select name="wing_size" class="wing-size-select"> <option value="6 Piece" data-price="8.99">6 Piece</option> <option value="10 Piece" data-price="13.99">10 Piece</option> <option value="20 Piece" data-price="24.99">20 Piece</option> <option value="50 Piece" data-price="49.99">50 Piece</option> </select> <label for="wing-sauce">Sauce:</label> <select name="wing_sauce" class="wing-sauce-select"> <option value="Hartsville Hot">Hartsville Hot</option> <option value="Garlic Parmesan">Garlic Parmesan</option> <option value="Buffalo">Buffalo</option> <option value="Sweet BBQ">Sweet BBQ</option> <option value="Jamaican Jerk">Jamaican Jerk</option> </select> </div> </div> <div class="add-to-cart-area"> <span class="item-price">$8.99</span> <button class="add-to-cart-btn">Add</button> </div> </div>
-                    </section>
-
-                    <section id="dress-your-own" class="menu-category">
-                        <h2>Dress Your Own Pizza</h2>
-                        <div class="menu-item" data-id="byo-pizza" data-name="Build Your Own Pizza"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Build Your Own Cheese Pizza</span> <div class="item-options"> <label>Select Size (Base Price):</label> <label><input type="radio" name="byo_size" value="Small (10&quot;)" data-price="9.99" data-topprice="0.99" checked> Small (10") - $9.99</label> <label><input type="radio" name="byo_size" value="Medium (12&quot;)" data-price="11.99" data-topprice="1.49"> Medium (12") - $11.99</label> <label><input type="radio" name="byo_size" value="Large (14&quot;)" data-price="13.99" data-topprice="1.99"> Large (14") - $13.99</label> <label><input type="radio" name="byo_size" value="XL (18&quot;)" data-price="16.99" data-topprice="2.99"> Extra Large (18") - $16.99</label> </div> <div class="item-options toppings-list"> <label>Choose Toppings (S $.99 M $1.49 L $1.99 XL $2.99 per topping):</label> <ul style="list-style: none; padding: 0; column-count: 2;"> <li><label><input type="checkbox" name="toppings" value="Pepperoni"> Pepperoni</label></li> <li><label><input type="checkbox" name="toppings" value="Mushrooms"> Mushrooms</label></li> <li><label><input type="checkbox" name="toppings" value="Green Peppers"> Green Peppers</label></li> <li><label><input type="checkbox" name="toppings" value="Banana Peppers"> Banana Peppers</label></li> <li><label><input type="checkbox" name="toppings" value="Onions"> Onions</label></li> <li><label><input type="checkbox" name="toppings" value="Green Olives"> Green Olives</label></li> <li><label><input type="checkbox" name="toppings" value="Black Olives"> Black Olives</label></li> <li><label><input type="checkbox" name="toppings" value="Tomatos"> Tomatos</label></li> <li><label><input type="checkbox" name="toppings" value="Sausage"> Sausage</label></li> <li><label><input type="checkbox" name="toppings" value="Beef"> Beef</label></li> <li><label><input type="checkbox" name="toppings" value="Canadian Bacon"> Canadian Bacon</label></li> <li><label><input type="checkbox" name="toppings" value="Ham"> Ham</label></li> <li><label><input type="checkbox" name="toppings" value="Bacon"> Bacon</label></li> <li><label><input type="checkbox" name="toppings" value="Fresh Garlic"> Fresh Garlic</label></li> </ul> </div> </div> <div class="add-to-cart-area"> <span class="item-price">$9.99</span> <button class="add-to-cart-btn">Add</button> </div> </div>
-                    </section>
-
-                    <section id="subs" class="menu-category">
-                        <h2>Jane's Submarine Sandwiches</h2>
-                        <div class="menu-item" data-id="hot-chicken-sub" data-name="Hartsville Hot Chicken Sub" data-price="9.99"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Hartsville Hot Chicken</span> <p class="item-description">Breaded Chicken Breast, and topped with Our Signature Hartsville Hot Seasoning.</p> </div> <div class="add-to-cart-area"><span class="item-price">$9.99</span><button class="add-to-cart-btn">Add</button></div> </div>
-                         <div class="menu-item" data-id="philly-sub" data-name="Philly Cheese Steak Sub" data-price="9.99"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Philly Cheese Steak Sub</span> <p class="item-description">Philly Steak, Onions, and Green Peppers.</p> </div> <div class="add-to-cart-area"><span class="item-price">$9.99</span><button class="add-to-cart-btn">Add</button></div> </div>
-                         <div class="menu-item" data-id="italian-sub" data-name="Italian Sub" data-price="9.99"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Italian Sub</span> <p class="item-description">Pepperoni, Ham, Salami, Cheese, Lettuce, and Tomato.</p> </div> <div class="add-to-cart-area"><span class="item-price">$9.99</span><button class="add-to-cart-btn">Add</button></div> </div>
-                         <div class="menu-item" data-id="meatball-sub" data-name="Meatball Sub" data-price="9.99"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Meatball Sub</span> <p class="item-description">Marinara, Sliced Meatballs, Parmesan Cheese, Provolone, and Mozzarella.</p> </div> <div class="add-to-cart-area"><span class="item-price">$9.99</span><button class="add-to-cart-btn">Add</button></div> </div>
-                         <div class="menu-item" data-id="grilled-chicken-sub" data-name="Grilled Chicken Sub" data-price="9.99"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Grilled Chicken Sub</span> <p class="item-description">Grilled Chicken, Cheese, Green Peppers, Onions.</p> </div> <div class="add-to-cart-area"><span class="item-price">$9.99</span><button class="add-to-cart-btn">Add</button></div> </div>
-                    </section>
-
-                    <section id="salads" class="menu-category">
-                        <h2>Jane's Delicious Salads</h2>
-                        <p>Dressings: French, Ranch, Italian, Honey Mustard, Balsamic Vinaigrette, and Thousand Island.</p>
-                        <div class="menu-item" data-id="house-salad" data-name="House Salad" data-price="8.99"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">House Salad</span> <p class="item-description">Lettuce, Tomato, Onion, Green Peppers, Black and Green Olives, Topped with cheese.</p> <div class="item-options"> <label for="house_salad_dressing">Dressing:</label> <select id="house_salad_dressing" name="salad_dressing" class="salad-dressing-select"> <option value="French">French</option> <option value="Ranch">Ranch</option> <option value="Italian">Italian</option> <option value="Honey Mustard">Honey Mustard</option> <option value="Balsamic Vinaigrette">Balsamic Vinaigrette</option> <option value="Thousand Island">Thousand Island</option> </select> </div> </div> <div class="add-to-cart-area"><span class="item-price">$8.99</span><button class="add-to-cart-btn">Add</button></div> </div>
-                         <div class="menu-item" data-id="antipasto-salad" data-name="Antipasto Salad" data-price="9.99"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Antipasto Salad</span> <p class="item-description">Lettuce, Tomato, Onion, Green Peppers, Black and Green Olives, Ham, Salami, and Pepperoni Topped with cheese.</p> <div class="item-options"> <label for="antipasto_salad_dressing">Dressing:</label> <select id="antipasto_salad_dressing" name="salad_dressing" class="salad-dressing-select"> <option value="French">French</option> <option value="Ranch">Ranch</option> <option value="Italian">Italian</option> <option value="Honey Mustard">Honey Mustard</option> <option value="Balsamic Vinaigrette">Balsamic Vinaigrette</option> <option value="Thousand Island">Thousand Island</option> </select> </div> </div> <div class="add-to-cart-area"><span class="item-price">$9.99</span><button class="add-to-cart-btn">Add</button></div> </div>
-                         <div class="menu-item" data-id="greek-salad" data-name="Greek Salad" data-price="9.99"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Greek Salad</span> <p class="item-description">Lettuce, Tomato, Onion, Green Peppers, Black and Green Olives, Feta Cheese Topped with cheese.</p> <div class="item-options"> <label for="greek_salad_dressing">Dressing:</label> <select id="greek_salad_dressing" name="salad_dressing" class="salad-dressing-select"> <option value="French">French</option> <option value="Ranch">Ranch</option> <option value="Italian">Italian</option> <option value="Honey Mustard">Honey Mustard</option> <option value="Balsamic Vinaigrette">Balsamic Vinaigrette</option> <option value="Thousand Island">Thousand Island</option> </select> </div> </div> <div class="add-to-cart-area"><span class="item-price">$9.99</span><button class="add-to-cart-btn">Add</button></div> </div>
-                         <div class="menu-item" data-id="grilled-chicken-salad" data-name="Grilled Chicken Salad" data-price="9.99"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Grilled Chicken Salad</span> <p class="item-description">Lettuce, Tomato, Onion, Green Peppers, Black and Green Olives, Grilled Chicken Topped with cheese.</p> <div class="item-options"> <label for="chicken_salad_dressing">Dressing:</label> <select id="chicken_salad_dressing" name="salad_dressing" class="salad-dressing-select"> <option value="French">French</option> <option value="Ranch">Ranch</option> <option value="Italian">Italian</option> <option value="Honey Mustard">Honey Mustard</option> <option value="Balsamic Vinaigrette">Balsamic Vinaigrette</option> <option value="Thousand Island">Thousand Island</option> </select> </div> </div> <div class="add-to-cart-area"><span class="item-price">$9.99</span><button class="add-to-cart-btn">Add</button></div> </div>
-                         <div class="menu-item" data-id="chef-salad" data-name="Chef Salad" data-price="9.99"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Chef Salad</span> <p class="item-description">Lettuce, Tomato, Onion, Green Peppers, Black and Green Olives, Turkey, Ham, Topped with cheese.</p> <div class="item-options"> <label for="chef_salad_dressing">Dressing:</label> <select id="chef_salad_dressing" name="salad_dressing" class="salad-dressing-select"> <option value="French">French</option> <option value="Ranch">Ranch</option> <option value="Italian">Italian</option> <option value="Honey Mustard">Honey Mustard</option> <option value="Balsamic Vinaigrette">Balsamic Vinaigrette</option> <option value="Thousand Island">Thousand Island</option> </select> </div> </div> <div class="add-to-cart-area"><span class="item-price">$9.99</span><button class="add-to-cart-btn">Add</button></div> </div>
-                    </section>
-
-                    <section id="pastas" class="menu-category">
-                        <h2>Jane's Favorite Pastas</h2>
-                        <p>All Pastas come with 2 Bread Sticks and a Side Salad.</p>
-                        <div class="menu-item" data-id="baked-spaghetti" data-name="Jane's Baked Spaghetti" data-price="12.99"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Jane's Baked Spaghetti</span> <div class="item-options"> <label><input type="checkbox" name="add_meatballs" data-addon-price="3.99"> Add Meatballs (+$3.99)</label> <label><input type="checkbox" name="add_sausage" data-addon-price="3.99"> Add Italian Sausage (+$3.99)</label> <label for="spaghetti_salad_dressing">Side Salad Dressing:</label> <select id="spaghetti_salad_dressing" name="salad_dressing" class="salad-dressing-select"> <option value="French">French</option> <option value="Ranch">Ranch</option> <option value="Italian">Italian</option> <option value="Honey Mustard">Honey Mustard</option> <option value="Balsamic Vinaigrette">Balsamic Vinaigrette</option> <option value="Thousand Island">Thousand Island</option> </select> </div> </div> <div class="add-to-cart-area"><span class="item-price">$12.99</span><button class="add-to-cart-btn">Add</button></div> </div>
-                         <div class="menu-item" data-id="baked-ziti" data-name="Jane's Baked Ziti" data-price="12.99"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Jane's Baked Ziti</span> <div class="item-options"> <label><input type="checkbox" name="add_meatballs" data-addon-price="3.99"> Add Meatballs (+$3.99)</label> <label><input type="checkbox" name="add_sausage" data-addon-price="3.99"> Add Italian Sausage (+$3.99)</label> <label for="ziti_salad_dressing">Side Salad Dressing:</label> <select id="ziti_salad_dressing" name="salad_dressing" class="salad-dressing-select"> <option value="French">French</option> <option value="Ranch">Ranch</option> <option value="Italian">Italian</option> <option value="Honey Mustard">Honey Mustard</option> <option value="Balsamic Vinaigrette">Balsamic Vinaigrette</option> <option value="Thousand Island">Thousand Island</option> </select> </div> </div> <div class="add-to-cart-area"><span class="item-price">$12.99</span><button class="add-to-cart-btn">Add</button></div> </div>
-                         <div class="menu-item" data-id="lasagna" data-name="Jane's Lasagna" data-price="14.99"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Jane's Lasagna</span> <div class="item-options"> <label for="lasagna_salad_dressing">Side Salad Dressing:</label> <select id="lasagna_salad_dressing" name="salad_dressing" class="salad-dressing-select"> <option value="French">French</option> <option value="Ranch">Ranch</option> <option value="Italian">Italian</option> <option value="Honey Mustard">Honey Mustard</option> <option value="Balsamic Vinaigrette">Balsamic Vinaigrette</option> <option value="Thousand Island">Thousand Island</option> </select> </div> </div> <div class="add-to-cart-area"><span class="item-price">$14.99</span><button class="add-to-cart-btn">Add</button></div> </div>
-                         <div class="menu-item" data-id="chicken-alfredo" data-name="Jane's Chicken Fettuccine Alfredo" data-price="15.99"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Jane's Chicken Fettuccine Alfredo</span> <div class="item-options"> <label for="alfredo_salad_dressing">Side Salad Dressing:</label> <select id="alfredo_salad_dressing" name="salad_dressing" class="salad-dressing-select"> <option value="French">French</option> <option value="Ranch">Ranch</option> <option value="Italian">Italian</option> <option value="Honey Mustard">Honey Mustard</option> <option value="Balsamic Vinaigrette">Balsamic Vinaigrette</option> <option value="Thousand Island">Thousand Island</option> </select> </div> </div> <div class="add-to-cart-area"><span class="item-price">$15.99</span><button class="add-to-cart-btn">Add</button></div> </div>
-                         <div class="menu-item" data-id="chicken-parm" data-name="Jane's Chicken Parmesan" data-price="15.99"> <div class="item-image-placeholder"></div> <div class="item-details"> <span class="item-name">Jane's Chicken Parmesan</span> <div class="item-options"> <label for="parm_salad_dressing">Side Salad Dressing:</label> <select id="parm_salad_dressing" name="salad_dressing" class="salad-dressing-select"> <option value="French">French</option> <option value="Ranch">Ranch</option> <option value="Italian">Italian</option> <option value="Honey Mustard">Honey Mustard</option> <option value="Balsamic Vinaigrette">Balsamic Vinaigrette</option> <option value="Thousand Island">Thousand Island</option> </select> </div> </div> <div class="add-to-cart-area"><span class="item-price">$15.99</span><button class="add-to-cart-btn">Add</button></div> </div>
-                    </section>
-
-                    <section id="desserts" class="menu-category">
-                        <h2>Jane's Desserts</h2>
-                         <div class="menu-item" data-id="cheesecake" data-name="Cheese Cake" data-price="5.99"> <div class="item-image-placeholder"></div><div class="item-details"><span class="item-name">Cheese Cake</span></div><div class="add-to-cart-area"><span class="item-price">$5.99</span><button class="add-to-cart-btn">Add</button></div> </div>
-                         <div class="menu-item" data-id="cannoli" data-name="Cannoli" data-price="3.99"> <div class="item-image-placeholder"></div><div class="item-details"><span class="item-name">Cannoli</span></div><div class="add-to-cart-area"><span class="item-price">$3.99</span><button class="add-to-cart-btn">Add</button></div> </div>
-                         <div class="menu-item" data-id="tiramisu" data-name="Tiramisu" data-price="4.99"> <div class="item-image-placeholder"></div><div class="item-details"><span class="item-name">Tiramisu</span></div><div class="add-to-cart-area"><span class="item-price">$4.99</span><button class="add-to-cart-btn">Add</button></div> </div>
-                         <div class="menu-item" data-id="milky-way" data-name="Milky Way Galaxy" data-price="5.99"> <div class="item-image-placeholder"></div><div class="item-details"><span class="item-name">Milky Way Galaxy</span></div><div class="add-to-cart-area"><span class="item-price">$5.99</span><button class="add-to-cart-btn">Add</button></div> </div>
-                         <div class="menu-item" data-id="strawberry-dessert" data-name="Strawberry" data-price="5.99"> <div class="item-image-placeholder"></div><div class="item-details"><span class="item-name">Strawberry</span></div><div class="add-to-cart-area"><span class="item-price">$5.99</span><button class="add-to-cart-btn">Add</button></div> </div>
-                         <div class="menu-item" data-id="pb-chocolate-dessert" data-name="Peanut Butter Chocolate" data-price="5.99"> <div class="item-image-placeholder"></div><div class="item-details"><span class="item-name">Peanut Butter Chocolate</span></div><div class="add-to-cart-area"><span class="item-price">$5.99</span><button class="add-to-cart-btn">Add</button></div> </div>
-                         <div class="menu-item" data-id="coconut-cloud-dessert" data-name="Coconut Cloud" data-price="5.99"> <div class="item-image-placeholder"></div><div class="item-details"><span class="item-name">Coconut Cloud</span></div><div class="add-to-cart-area"><span class="item-price">$5.99</span><button class="add-to-cart-btn">Add</button></div> </div>
-                         <div class="menu-item" data-id="limoncello-dessert" data-name="Limoncello" data-price="5.99"> <div class="item-image-placeholder"></div><div class="item-details"><span class="item-name">Limoncello</span></div><div class="add-to-cart-area"><span class="item-price">$5.99</span><button class="add-to-cart-btn">Add</button></div> </div>
-                         <div class="menu-item" data-id="chocolate-cannoli" data-name="Chocolate Cannoli" data-price="5.99"> <div class="item-image-placeholder"></div><div class="item-details"><span class="item-name">Chocolate Cannoli</span></div><div class="add-to-cart-area"><span class="item-price">$5.99</span><button class="add-to-cart-btn">Add</button></div> </div>
-                    </section>
-                </div></div><div class="cart-column">
-                <div class="sticky-cart">
-                    <div class="cart-box">
-                        <h2>Your Order</h2>
-                        <div id="cart-items">
-                            <p style="display: block;">Your cart is empty.</p>
-                            <ul style="display: none;"></ul>
+        <section id="work" class="featured-work-section section-padding">
+            <div class="container">
+                <h2>Featured Work</h2>
+                <div class="project-grid featured-grid">
+                    <article class="project-card">
+                        <img src="images/project1-thumbnail.jpg" alt="[Project 1 Title] Thumbnail">
+                        <div class="card-content">
+                            <h3>[Project 1 Title]</h3>
+                            <span class="tag">Web Design</span> <span class="tag">React</span>
+                            <a href="project-detail-1.html" class="card-link">View Case Study</a>
                         </div>
-                        <div id="cart-total">Total: $0.00</div>
-                        <button id="checkout-btn" class="hidden">Proceed to Checkout</button>
+                    </article>
+                    <article class="project-card">
+                        <img src="images/project2-thumbnail.jpg" alt="[Project 2 Title] Thumbnail">
+                        <div class="card-content">
+                            <h3>[Project 2 Title]</h3>
+                             <span class="tag">iOS App</span> <span class="tag">SwiftUI</span>
+                            <a href="project-detail-2.html" class="card-link">View Case Study</a>
+                        </div>
+                    </article>
+                    <article class="project-card">
+                        <img src="images/project3-thumbnail.jpg" alt="[Project 3 Title] Thumbnail">
+                         <div class="card-content">
+                           <h3>[Project 3 Title]</h3>
+                            <span class="tag">Android App</span> <span class="tag">Kotlin</span>
+                           <a href="project-detail-3.html" class="card-link">View Case Study</a>
+                         </div>
+                    </article>
+                </div>
+                <div class="text-center" style="margin-top: 2rem;">
+                    <a href="portfolio.html" class="btn btn-secondary">See All Projects</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="services" class="services-section section-padding bg-light">
+             <div class="container">
+                <h2>My Expertise</h2>
+                <div class="expertise-grid">
+                    <div class="expertise-category">
+                        <i class="icon-design">[Icon]</i> <h3>Design</h3>
+                        <ul>
+                            <li>UI/UX Design</li>
+                            <li>Prototyping & Wireframing</li>
+                            <li>Interaction Design</li>
+                            <li>Mobile App Design</li>
+                            <li>Web Design</li>
+                        </ul>
+                    </div>
+                    <div class="expertise-category">
+                         <i class="icon-web">[Icon]</i>
+                        <h3>Web Development</h3>
+                        <ul>
+                            <li>HTML5, CSS3, JavaScript (ES6+)</li>
+                            <li>React, Vue.js [or your preference]</li>
+                            <li>Responsive Design</li>
+                            <li>Performance Optimization</li>
+                            <li>[Backend Tech if applicable]</li>
+                        </ul>
+                    </div>
+                    <div class="expertise-category">
+                         <i class="icon-app">[Icon]</i>
+                        <h3>App Development</h3>
+                        <ul>
+                            <li>iOS (Swift / SwiftUI)</li>
+                            <li>Android (Kotlin / Jetpack Compose)</li>
+                            <li>React Native / Flutter [if applicable]</li>
+                            <li>API Integration</li>
+                            <li>App Store Submission</li>
+                        </ul>
                     </div>
                 </div>
-            </div></div> <div id="checkout-view" class="checkout-box hidden">
-             <h2>Checkout</h2>
-             <form id="checkout-form">
-                 <h3>Your Information</h3>
-                 <label for="name">Name:</label><input type="text" id="name" name="name" required>
-                 <label for="phone">Phone:</label><input type="tel" id="phone" name="phone" required>
-                 <label for="email">Email:</label><input type="email" id="email" name="email">
+            </div>
+        </section>
 
-                <h3>Delivery or Pickup?</h3>
-                 <div class="delivery-options">
-                     <label><input type="radio" name="order_type" value="pickup" checked> Pickup</label>
-                     <label><input type="radio" name="order_type" value="delivery"> Delivery</label>
-                 </div>
-                 <div id="delivery-address" class="hidden" style="margin-top: 15px;">
-                     <label for="address">Address:</label><input type="text" id="address" name="address">
-                     <label for="city">City:</label><input type="text" id="city" name="city">
-                     <label for="zip">Zip Code:</label><input type="text" id="zip" name="zip">
-                 </div>
+        <section id="about" class="about-section section-padding">
+            <div class="container about-container">
+                <div class="about-image">
+                    <img src="images/your-photo.jpg" alt="[Your Name], Web Designer and App Developer">
+                </div>
+                <div class="about-text">
+                    <h2>About Me</h2>
+                    <p>[Write your story here. Your journey, passion, philosophy. Example: I fell in love with coding when... and discovered design shortly after... My goal is always to...]</p>
+                    <p>[More details about your approach, what drives you, maybe a key value like 'user-first' or 'pixel-perfect'.]</p>
+                    </div>
+            </div>
+        </section>
 
-                 <h3>Order Summary</h3>
-                 <div id="checkout-summary">
-                     <h4>Items</h4>
-                     <div id="checkout-summary-items"></div>
-                     <div class="total">
-                         <span>Total:</span>
-                         <span id="checkout-summary-total">$0.00</span>
-                     </div>
-                 </div>
+        <section id="contact" class="contact-section section-padding bg-light">
+            <div class="container text-center">
+                <h2>Let's Build Something Together</h2>
+                <p>Interested in collaborating or have a question? Reach out!</p>
+                <form id="contact-form" class="contact-form">
+                    <div class="form-group">
+                        <input type="text" id="name" name="name" placeholder="Your Name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="email" name="email" placeholder="Your Email" required>
+                    </div>
+                    <div class="form-group">
+                        <textarea id="message" name="message" rows="5" placeholder="Your Message" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Send Message</button>
+                </form>
+                <div class="social-links">
+                    <a href="[Your LinkedIn URL]" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="icon-linkedin">[LinkedIn Icon]</i></a>
+                    <a href="[Your GitHub URL]" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="icon-github">[GitHub Icon]</i></a>
+                    <a href="[Your Dribbble/Behance URL (optional)]" target="_blank" rel="noopener noreferrer" aria-label="Dribbble"><i class="icon-dribbble">[Dribbble Icon]</i></a>
+                    <a href="mailto:[Your Email Address]" aria-label="Email"><i class="icon-email">[Email Icon]</i></a>
+                </div>
+            </div>
+        </section>
+    </main>
 
-                 <h3>Payment</h3>
-                 <p>Enter card details below:</p>
-                 <div id="card-element"></div>
-                 <div id="card-errors" role="alert"></div>
+    <footer class="site-footer-bottom">
+        <div class="container">
+            <p>&copy; <span id="current-year"></span> [Your Name]. All rights reserved.</p>
+            <a href="#top" class="back-to-top">Top &uarr;</a>
+        </div>
+    </footer>
 
-                 <button type="submit" id="submit-order-btn">Place Order & Pay (Test)</button>
-             </form>
-              <button id="back-to-menu-btn" type="button">Back to Menu</button>
-        </div></div> <script src="https://js.stripe.com/v3/" defer></script>
-<script defer>
-    // Wait for the DOM to be fully loaded before running JS
-    document.addEventListener('DOMContentLoaded', () => {
-
-        // --- DOM Element References ---
-        const themeSwitcher = document.getElementById('theme-switcher');
-        const body = document.body;
-        const cartItemsList = document.getElementById('cart-items')?.querySelector('ul'); // Use optional chaining
-        const cartItemsEmptyMsg = document.getElementById('cart-items')?.querySelector('p');
-        const cartTotalElement = document.getElementById('cart-total');
-        const checkoutButton = document.getElementById('checkout-btn');
-        const menuCartView = document.getElementById('menu-cart-view'); // The main view wrapper
-        const checkoutView = document.getElementById('checkout-view');
-        const backToMenuButton = document.getElementById('back-to-menu-btn');
-        const checkoutForm = document.getElementById('checkout-form');
-        const cardErrors = document.getElementById('card-errors'); // Reference for Stripe errors
-
-        // --- Global Variables ---
-        let cart = [];
-        // **IMPORTANT**: Replace with your actual **Test** Publishable Key
-        const stripePublicKey = 'pk_test_YOUR_TEST_PUBLISHABLE_KEY'; // Use your test key!
-        let stripe = null;
-        let cardElement = null; // To hold the Stripe element instance
-
-
-        // --- Theme Switcher Logic ---
-        function applyTheme(theme) {
-            if (theme === 'light') {
-                body.classList.add('light-mode');
-                if (themeSwitcher) themeSwitcher.textContent = 'Dark Mode';
-            } else {
-                body.classList.remove('light-mode');
-                if (themeSwitcher) themeSwitcher.textContent = 'Light Mode';
-            }
-             // Update Stripe element styles if checkout is visible
-             if (!checkoutView.classList.contains('hidden') && cardElement) {
-                 updateStripeElementTheme();
-             }
-        }
-
-        if (themeSwitcher) {
-            const savedTheme = localStorage.getItem('theme') || 'dark';
-            applyTheme(savedTheme);
-
-            themeSwitcher.addEventListener('click', () => {
-                let currentTheme = body.classList.contains('light-mode') ? 'light' : 'dark';
-                let newTheme = currentTheme === 'light' ? 'dark' : 'light';
-                applyTheme(newTheme);
-                localStorage.setItem('theme', newTheme);
-            });
-        } else {
-            console.error("Theme switcher button not found.");
-        }
-
-        // --- Price Update Logic ---
-        function updateDisplayedPrice(itemElement) {
-             if (!itemElement) return;
-             let price = 0;
-             const basePriceAttr = itemElement.getAttribute('data-price');
-             let basePrice = basePriceAttr ? parseFloat(basePriceAttr) : 0;
-             price = basePrice;
-
-             const radioSelected = itemElement.querySelector('input[type="radio"]:checked');
-             if (radioSelected && radioSelected.hasAttribute('data-price')) {
-                 price = parseFloat(radioSelected.getAttribute('data-price'));
-             }
-
-             const selectElement = itemElement.querySelector('select.wing-size-select');
-             if (selectElement) {
-                 const selectedOption = selectElement.options[selectElement.selectedIndex];
-                 if (selectedOption && selectedOption.hasAttribute('data-price')) {
-                     price = parseFloat(selectedOption.getAttribute('data-price'));
-                 }
-             }
-
-             itemElement.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
-                 if (checkbox.hasAttribute('data-addon-price')) {
-                     price += parseFloat(checkbox.getAttribute('data-addon-price'));
-                 }
-             });
-
-             if (itemElement.getAttribute('data-id') === 'byo-pizza') {
-                 const sizeRadio = itemElement.querySelector('input[type="radio"][name="byo_size"]:checked');
-                 let byoPrice = sizeRadio ? parseFloat(sizeRadio.getAttribute('data-price') || 0) : 0;
-                 const toppingPrice = sizeRadio ? parseFloat(sizeRadio.getAttribute('data-topprice') || 0) : 0;
-                 const selectedToppings = itemElement.querySelectorAll('input[type="checkbox"][name="toppings"]:checked').length;
-                 byoPrice += selectedToppings * toppingPrice;
-                 price = byoPrice;
-             }
-
-             const priceDisplay = itemElement.querySelector('.add-to-cart-area .item-price'); // Target specific span
-             if(priceDisplay) { priceDisplay.textContent = `$${price.toFixed(2)}`; }
-         }
-
-
-        // --- Cart Logic ---
-        function addToCart(itemElement) {
-            if (!itemElement) return;
-            const id = itemElement.getAttribute('data-id');
-            const name = itemElement.getAttribute('data-name');
-            let price = 0;
-            let optionsDescription = [];
-
-            // Recalculate price based on current selections
-            const radioSelected = itemElement.querySelector('input[type="radio"]:checked');
-            const selectElement = itemElement.querySelector('select.wing-size-select');
-
-             if (radioSelected && radioSelected.hasAttribute('data-price')) {
-                 price = parseFloat(radioSelected.getAttribute('data-price'));
-                 const labelText = radioSelected.closest('label')?.textContent.trim().replace(/\s-\s*\$\d+\.\d+$/, '') || radioSelected.value;
-                 optionsDescription.push(labelText);
-             } else if (selectElement) { // Wing Size Specific
-                 const selectedOption = selectElement.options[selectElement.selectedIndex];
-                 if (selectedOption && selectedOption.hasAttribute('data-price')) {
-                     price = parseFloat(selectedOption.getAttribute('data-price'));
-                     optionsDescription.push(selectedOption.textContent.trim());
-                 }
-             } else {
-                 price = parseFloat(itemElement.getAttribute('data-price') || 0);
-             }
-
-            itemElement.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
-                 const labelText = checkbox.closest('label')?.textContent.trim().replace(/\(\+\$.*\)/, '').trim() || checkbox.value;
-                 optionsDescription.push(labelText);
-                 if (checkbox.hasAttribute('data-addon-price')) {
-                     price += parseFloat(checkbox.getAttribute('data-addon-price'));
-                 }
-            });
-
-            // Get options from *other* selects (sauces, dressings)
-            itemElement.querySelectorAll('select:not(.wing-size-select)').forEach(select => {
-                 const selectedOption = select.options[select.selectedIndex];
-                 if (selectedOption) {
-                     optionsDescription.push(selectedOption.value); // Use value (e.g., "Ranch")
-                 }
-            });
-
-            if (id === 'byo-pizza') {
-                 const sizeRadio = itemElement.querySelector('input[type="radio"][name="byo_size"]:checked');
-                 const basePrice = sizeRadio ? parseFloat(sizeRadio.getAttribute('data-price') || 0) : 0;
-                 const toppingPrice = sizeRadio ? parseFloat(sizeRadio.getAttribute('data-topprice') || 0) : 0;
-                 const selectedToppings = itemElement.querySelectorAll('input[type="checkbox"][name="toppings"]:checked');
-                 price = basePrice + (selectedToppings.length * toppingPrice);
-
-                 optionsDescription = [sizeRadio ? sizeRadio.value : 'Custom Size'];
-                 selectedToppings.forEach(topping => optionsDescription.push(topping.value));
-             }
-
-
-            const cartItemId = `${id}-${Date.now()}-${Math.random()}`;
-            const cartItem = { cartId: cartItemId, id: id, name: name, price: price, options: optionsDescription.join(', ') };
-            cart.push(cartItem);
-            renderCart();
-        }
-
-        function renderCart() {
-            if (!cartItemsList || !cartItemsEmptyMsg || !cartTotalElement || !checkoutButton) return; // Ensure elements exist
-
-            cartItemsList.innerHTML = '';
-            let total = 0;
-
-            if (cart.length === 0) {
-                 cartItemsEmptyMsg.style.display = 'block';
-                 cartItemsList.style.display = 'none';
-                 checkoutButton.classList.add('hidden');
-            } else {
-                 cartItemsEmptyMsg.style.display = 'none';
-                 cartItemsList.style.display = 'block';
-                cart.forEach(item => {
-                    total += item.price;
-                    const li = document.createElement('li');
-                    li.innerHTML = `<div class="item-info"><span>${item.name}</span>${item.options ? `<span class="cart-item-options">${item.options}</span>` : ''}</div><span class="item-price">$${item.price.toFixed(2)}</span>`;
-                    cartItemsList.appendChild(li);
-                });
-                 checkoutButton.classList.remove('hidden');
-            }
-            cartTotalElement.textContent = `Total: $${total.toFixed(2)}`;
-        }
-
-        // --- Stripe Elements Setup ---
-        function initializeStripe() {
-             try {
-                 stripe = Stripe(stripePublicKey); // Initialize Stripe object
-
-                 const elements = stripe.elements();
-                 const style = { /* Base styles */
-                    base: { color: body.classList.contains('light-mode') ? '#32325d' : '#ffffff', fontFamily: 'inherit', fontSize: '16px', '::placeholder': { color: body.classList.contains('light-mode') ? '#aab7c4' : '#777' } },
-                    invalid: { color: '#fa755a', iconColor: '#fa755a' }
-                 };
-                 cardElement = elements.create('card', { style: style });
-                 cardElement.mount('#card-element');
-
-                 cardElement.on('change', (event) => {
-                     if (cardErrors) cardErrors.textContent = event.error ? event.error.message : '';
-                 });
-                 console.log("Stripe Elements Initialized and Mounted.");
-             } catch (error) {
-                 console.error("Error initializing Stripe:", error);
-                 if (cardErrors) cardErrors.textContent = "Could not load payment details.";
-             }
-         }
-
-         function updateStripeElementTheme() {
-            if (!cardElement) return;
-             const newBaseColor = body.classList.contains('light-mode') ? '#32325d' : '#ffffff';
-             const newPlaceholderColor = body.classList.contains('light-mode') ? '#aab7c4' : '#777';
-             cardElement.update({
-                 style: {
-                     base: { color: newBaseColor, '::placeholder': { color: newPlaceholderColor } }
-                 }
-             });
-         }
-
-
-        // --- View Switching Logic ---
-        if (checkoutButton && menuCartView && checkoutView) {
-            checkoutButton.addEventListener('click', () => {
-                menuCartView.classList.add('hidden');
-                checkoutView.classList.remove('hidden');
-
-                // Populate checkout summary
-                const summaryItems = document.getElementById('checkout-summary-items');
-                const summaryTotal = document.getElementById('checkout-summary-total');
-                if(summaryItems && summaryTotal) {
-                    summaryItems.innerHTML = '';
-                    let total = 0;
-                    cart.forEach(item => {
-                        const div = document.createElement('div');
-                        div.innerHTML = `<span>${item.name} ${item.options ? `(${item.options})` : ''}</span> <span>$${item.price.toFixed(2)}</span>`;
-                        summaryItems.appendChild(div);
-                        total += item.price;
-                    });
-                    summaryTotal.textContent = `$${total.toFixed(2)}`;
-                }
-
-                // Initialize Stripe only when view is shown
-                if (!cardElement) { // Initialize only if not already done
-                   initializeStripe();
-                } else {
-                    // If already initialized, ensure theme style is correct
-                    updateStripeElementTheme();
-                }
-            });
-        } else {
-             console.error("Checkout button or view containers not found.");
-        }
-
-        if (backToMenuButton && menuCartView && checkoutView) {
-             backToMenuButton.addEventListener('click', () => {
-                 checkoutView.classList.add('hidden');
-                 menuCartView.classList.remove('hidden');
-                 // Optional: Clear card errors when going back
-                 if(cardErrors) cardErrors.textContent = '';
-                 // Optional: Destroy card element if you prefer re-creating it each time
-                 // if (cardElement) { cardElement.unmount(); cardElement.destroy(); cardElement = null;}
-             });
-        } else {
-             console.error("Back to menu button or view containers not found.");
-        }
-
-
-        // --- Event Listeners Setup ---
-        // Add to Cart buttons
-        document.querySelectorAll('.add-to-cart-btn').forEach(button => {
-            button.addEventListener('click', (event) => {
-                const menuItemElement = event.target.closest('.menu-item');
-                addToCart(menuItemElement);
-            });
-        });
-
-        // Option change listeners for dynamic price update
-        document.querySelectorAll('.menu-item input[type="radio"], .menu-item input[type="checkbox"], .menu-item select').forEach(input => {
-            input.addEventListener('change', (event) => {
-                const menuItemElement = event.target.closest('.menu-item');
-                updateDisplayedPrice(menuItemElement);
-            });
-        });
-
-        // Delivery/Pickup toggle
-        document.querySelectorAll('input[name="order_type"]').forEach(radio => {
-             radio.addEventListener('change', (event) => {
-                 const deliveryDiv = document.getElementById('delivery-address');
-                 const addressInput = document.getElementById('address');
-                 if (deliveryDiv && addressInput) {
-                     if (event.target.value === 'delivery') {
-                         deliveryDiv.classList.remove('hidden');
-                         addressInput.required = true;
-                     } else {
-                         deliveryDiv.classList.add('hidden');
-                         addressInput.required = false;
-                     }
-                 }
-             });
-         });
-
-        // Checkout Form Submission (Placeholder)
-        if (checkoutForm) {
-            checkoutForm.addEventListener('submit', async (event) => {
-                event.preventDefault();
-                console.log("Checkout form submit triggered.");
-                // Show processing state here (e.g., disable button)
-
-                 // ** Crucial Step: Check if Stripe and Card Element are initialized **
-                 if (!stripe || !cardElement) {
-                     console.error("Stripe or Card Element not initialized.");
-                     if(cardErrors) cardErrors.textContent = "Payment system not ready. Please refresh.";
-                     return; // Stop submission
-                 }
-
-                 // Clear previous errors
-                 if(cardErrors) cardErrors.textContent = '';
-
-
-                // ** Placeholder for actual Stripe Payment Logic **
-                alert("TEST: Submitting order... (Payment logic simulation)");
-                console.log("Simulating backend call and Stripe confirmation...");
-
-                // Example of where you'd interact with your backend and Stripe
-                try {
-                    // 1. Create PaymentIntent on backend (await fetch('/create-payment-intent', ...))
-                    // const { clientSecret } = await backendResponse.json();
-
-                    // 2. Confirm payment on frontend
-                    // const result = await stripe.confirmCardPayment(clientSecret, {
-                    //     payment_method: { card: cardElement, billing_details: { name: document.getElementById('name').value } }
-                    // });
-
-                    // if (result.error) {
-                    //     if(cardErrors) cardErrors.textContent = result.error.message;
-                    //     console.error("Stripe payment error:", result.error);
-                    //     // Re-enable button here
-                    // } else {
-                    //     if (result.paymentIntent.status === 'succeeded') {
-                    //         alert("Payment Successful! (Simulation)");
-                    //         // Clear cart, redirect to success page, etc.
-                    //         cart = []; renderCart(); backToMenuButton.click();
-                    //     }
-                    // }
-                    // SIMULATED SUCCESS for testing the flow:
-                    setTimeout(() => { // Simulate network delay
-                         alert("Payment Successful! (Simulation)");
-                         cart = []; renderCart(); backToMenuButton.click();
-                    }, 1000);
-
-
-                } catch (error) {
-                     console.error("Error during checkout simulation:", error);
-                     if(cardErrors) cardErrors.textContent = "An unexpected error occurred.";
-                     // Re-enable button here
-                 }
-            });
-        } else {
-            console.error("Checkout form not found.");
-        }
-
-
-        // --- Initial Page Setup ---
-        renderCart(); // Render initial cart state
-        // Calculate initial prices for items with default options
-        document.querySelectorAll('.menu-item').forEach(item => updateDisplayedPrice(item));
-
-    }); // End DOMContentLoaded
-</script>
-
+    <script src="script.js"></script>
 </body>
 </html>
